@@ -1,0 +1,9 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+ #toplevel_page_zimrate-dashboard .wp-menu-image.dashicons-before > img{
+    width: 20px ;
+    height: 20px ;
+ }

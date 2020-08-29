@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../../zimrate"
+		},
+		{
+			"name": "zimrate",
+			"path": "."
+		}
+	],
+	"settings": {}
+}

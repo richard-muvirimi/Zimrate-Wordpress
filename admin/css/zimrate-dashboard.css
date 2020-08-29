@@ -1,0 +1,49 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+.zimrate h1,
+.zimrate h2,
+.zimrate h3,
+.zimrate h4,
+.zimrate h5,
+.zimrate h6 {
+  text-align: center;
+}
+
+.zimrate {
+  padding-right: 20px;
+}
+
+.zimrate table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.zimrate th,
+.zimrate td {
+  text-align: center;
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.zimrate tr:nth-child(even) {
+  background-color: white;
+}
+
+.zimrate tbody tr:hover {
+  background-color: #ddd;
+}
+
+.zimrate th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: #242830;
+  color: white;
+}
+
+.zimrate-plugins,
+.zimrate-rates {
+  margin: 20px 0;
+}
