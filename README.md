@@ -1,4 +1,4 @@
-=== ZimRate ===
+# ZimRate
 
 - Contributors: tygalive
 - Donate link: https://tyganeutronics.com
@@ -12,7 +12,7 @@
 
 All Zimbabwean exchange rates from multiple sites in one plugin. No need to scrounge the internet for the current days rate.
 
-== Description ==
+### Description
 
 Add automatic Zimbabwean currency conversion to your site.
 This plugin modifies the result from listed plugins api calls before they are submitted to plugin.
@@ -29,48 +29,44 @@ All Zimbabwean rates are obtained from [ZimRate](http://zimrate.tyganeutronics.c
 
 Note: This plugin is not directly a currency switcher (as that would be redundant considering the number of options on wordpress.org).
 
-== Installation ==
+### Installation
 
-This section describes how to install the plugin and get it working.
+1. Upload `/zimrate/` to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
 
-e.g.
+### Frequently Asked Questions
 
-1. Upload `zimrate.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
-
-== Frequently Asked Questions ==
-
-= What's this? =
+##### What's this?
 
 A currency injector for wordpress plugins. When said plugin requests for latest currency rates using wordpress' functions, this plugin modifes the result before it is submitted to the requesting plugin.
 
-= Where's my favourate plugin? =
+##### Where's my favourate plugin?
 
 Though have tried to cover as many plugins as possible, there is a limitation on the plugins that can be directly supported.
 This plugin relies on a plugin using wordpress' internal http_request feature which has hooks to modify the result or if said plugin has hooks to modify result before use.
 If you have a plugin that you want added, you are free to contact.
 
-= What if i need feature X? =
+##### What if i need feature X?
 
 You are free to contact and will happily add feature X as long as it is in the scope of the plugin.
 
-= Easy Digital Downloads is not supported? =
+##### Easy Digital Downloads is not supported?
 
 Though would have wanted to supported Easy Digital Downloads, could not get hold of a currency convertor for it.
 
-== Screenshots ==
+### Screenshots
 
 1. Zimrate Dashboard.
 2. Zimrate options screen
 
-== Changelog ==
+### Changelog
 
-= 1.0 =
+##### 1.0
 
 - Initial Release.
 
-== Upgrade Notice ==
+### Upgrade Notice
 
-= 1.0 =
+##### 1.0
+
 Initial Release.
