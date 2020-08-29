@@ -28,7 +28,7 @@
 // If this file is called directly, abort.
 
 if (!defined('WPINC')) {
-    die;
+    die();
 }
 
 /**
@@ -44,7 +44,8 @@ define('ZIMRATE_VERSION', '1.0.0');
  */
 function activate_zimrate()
 {
-    require_once plugin_dir_path(__FILE__) . 'includes/class-zimrate-activator.php';
+    require_once plugin_dir_path(__FILE__) .
+        'includes/class-zimrate-activator.php';
     Zimrate_Activator::activate();
 }
 
@@ -54,7 +55,8 @@ function activate_zimrate()
  */
 function deactivate_zimrate()
 {
-    require_once plugin_dir_path(__FILE__) . 'includes/class-zimrate-deactivator.php';
+    require_once plugin_dir_path(__FILE__) .
+        'includes/class-zimrate-deactivator.php';
     Zimrate_Deactivator::deactivate();
 }
 
@@ -78,10 +80,8 @@ require plugin_dir_path(__FILE__) . 'includes/class-zimrate.php';
  */
 function run_zimrate()
 {
-
     $plugin = new Zimrate();
     $plugin->run();
-
 }
 
 run_zimrate();

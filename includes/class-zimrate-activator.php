@@ -20,17 +20,16 @@
  * @subpackage Zimrate/includes
  * @author     Richard Muvirimi <tygalive@gmail.com>
  */
-class Zimrate_Activator {
-
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
-	 */
-	public static function activate() {
-
-	}
-
+class Zimrate_Activator
+{
+    /**
+     * Short Description. (use period)
+     *
+     * Long Description.
+     *
+     * @since    1.0.0
+     */
+    public static function activate()
+    {
+    }
 }

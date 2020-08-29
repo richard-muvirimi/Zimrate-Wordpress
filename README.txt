@@ -1,5 +1,5 @@
 === ZimRate ===
-Contributors: (tygalive)
+Contributors: tygalive
 Donate link: https://tyganeutronics.com
 Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 Requires at least: 4.0.0

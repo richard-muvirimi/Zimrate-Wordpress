@@ -31,7 +31,6 @@
  */
 class Zimrate
 {
-
     /**
      * The loader that's responsible for maintaining and registering all hooks that power
      * the plugin.
@@ -71,7 +70,6 @@ class Zimrate
      */
     public function __construct()
     {
-
         if (defined('ZIMRATE_VERSION')) {
             $this->version = ZIMRATE_VERSION;
         } else {
@@ -85,7 +83,6 @@ class Zimrate
         $this->define_admin_hooks();
         $this->define_plugins_hooks();
         $this->define_public_hooks();
-
     }
 
     /**
@@ -106,43 +103,47 @@ class Zimrate
      */
     private function load_dependencies()
     {
-
         /**
          * The file housing common plugin functions
          */
-        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/functions.php';
+        require_once plugin_dir_path(dirname(__FILE__)) .
+            'includes/functions.php';
 
         /**
          * The class responsible for orchestrating the actions and filters of the
          * core plugin.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-zimrate-loader.php';
+        require_once plugin_dir_path(dirname(__FILE__)) .
+            'includes/class-zimrate-loader.php';
 
         /**
          * The class responsible for defining internationalization functionality
          * of the plugin.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-zimrate-i18n.php';
+        require_once plugin_dir_path(dirname(__FILE__)) .
+            'includes/class-zimrate-i18n.php';
 
         /**
          * The class responsible for defining all actions that occur in the admin area.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-zimrate-admin.php';
+        require_once plugin_dir_path(dirname(__FILE__)) .
+            'admin/class-zimrate-admin.php';
 
         /**
          * The class responsible for defining all actions that occur in the plugins
          * side of the site.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) . 'plugins/class-zimrate-plugin.php';
+        require_once plugin_dir_path(dirname(__FILE__)) .
+            'plugins/class-zimrate-plugin.php';
 
         /**
          * The class responsible for defining all actions that occur in the public-facing
          * side of the site.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-zimrate-public.php';
+        require_once plugin_dir_path(dirname(__FILE__)) .
+            'public/class-zimrate-public.php';
 
         $this->loader = new Zimrate_Loader();
-
     }
 
     /**
@@ -156,11 +157,13 @@ class Zimrate
      */
     private function set_locale()
     {
-
         $plugin_i18n = new Zimrate_i18n();
 
-        $this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
-
+        $this->loader->add_action(
+            'plugins_loaded',
+            $plugin_i18n,
+            'load_plugin_textdomain'
+        );
     }
 
     /**
@@ -172,24 +175,53 @@ class Zimrate
      */
     private function define_admin_hooks()
     {
+        $plugin_admin = new Zimrate_Admin(
+            $this->get_plugin_name(),
+            $this->get_version()
+        );
 
-        $plugin_admin = new Zimrate_Admin($this->get_plugin_name(), $this->get_version());
-
-        $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
-        $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+        $this->loader->add_action(
+            'admin_enqueue_scripts',
+            $plugin_admin,
+            'enqueue_styles'
+        );
+        $this->loader->add_action(
+            'admin_enqueue_scripts',
+            $plugin_admin,
+            'enqueue_scripts'
+        );
 
         //on init admin menu
         $this->loader->add_action('admin_menu', $plugin_admin, 'on_admin_menu');
 
         //register options
-        $this->loader->add_action('admin_init', $plugin_admin, 'register_setting');
-        $this->loader->add_action('admin_init', $plugin_admin, 'add_settings_section');
-        $this->loader->add_action('admin_init', $plugin_admin, 'add_settings_fields');
+        $this->loader->add_action(
+            'admin_init',
+            $plugin_admin,
+            'register_setting'
+        );
+        $this->loader->add_action(
+            'admin_init',
+            $plugin_admin,
+            'add_settings_section'
+        );
+        $this->loader->add_action(
+            'admin_init',
+            $plugin_admin,
+            'add_settings_fields'
+        );
 
         //add zimbabwean currency
-        $this->loader->add_filter('woocommerce_currencies', $plugin_admin, 'add_woocommerce_currencies');
-        $this->loader->add_filter('woocommerce_currency_symbols', $plugin_admin, 'add_woocommerce_currency_symbols');
-
+        $this->loader->add_filter(
+            'woocommerce_currencies',
+            $plugin_admin,
+            'add_woocommerce_currencies'
+        );
+        $this->loader->add_filter(
+            'woocommerce_currency_symbols',
+            $plugin_admin,
+            'add_woocommerce_currency_symbols'
+        );
     }
 
     /**
@@ -201,12 +233,21 @@ class Zimrate
      */
     private function define_public_hooks()
     {
+        $plugin_public = new Zimrate_Public(
+            $this->get_plugin_name(),
+            $this->get_version()
+        );
 
-        $plugin_public = new Zimrate_Public($this->get_plugin_name(), $this->get_version());
-
-        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
-        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
-
+        $this->loader->add_action(
+            'wp_enqueue_scripts',
+            $plugin_public,
+            'enqueue_styles'
+        );
+        $this->loader->add_action(
+            'wp_enqueue_scripts',
+            $plugin_public,
+            'enqueue_scripts'
+        );
     }
 
     /**
@@ -218,22 +259,56 @@ class Zimrate
      */
     private function define_plugins_hooks()
     {
-
-        $plugin_plugins = new Zimrate_Plugins($this->get_plugin_name(), $this->get_version());
+        $plugin_plugins = new Zimrate_Plugins(
+            $this->get_plugin_name(),
+            $this->get_version()
+        );
 
         //modify requests before delivery to plugin
-        $this->loader->add_filter('http_response', $plugin_plugins, 'inject_http_response', 10, 3);
+        $this->loader->add_filter(
+            'http_response',
+            $plugin_plugins,
+            'inject_http_response',
+            10,
+            3
+        );
 
-        $this->loader->add_action('plugins_loaded', $plugin_plugins, 'plugins_loaded');
+        $this->loader->add_action(
+            'plugins_loaded',
+            $plugin_plugins,
+            'plugins_loaded'
+        );
 
         //currency-switcher-woocommerce
-        $this->loader->add_filter('alg_wc_cs_get_exchange_rate', $plugin_plugins, 'currency_switcher_woocommerce', 10, 4);
+        $this->loader->add_filter(
+            'alg_wc_cs_get_exchange_rate',
+            $plugin_plugins,
+            'currency_switcher_woocommerce',
+            10,
+            4
+        );
 
         //currency-exchange-for-woocommerce
-        $this->loader->add_filter('berocket_ce_apis_sanitize_oer', $plugin_plugins, 'currency_exchange_for_woocommerce');
-        $this->loader->add_filter('berocket_ce_apis_sanitize_currencylayer', $plugin_plugins, 'currency_exchange_for_woocommerce');
-        $this->loader->add_filter('berocket_ce_apis_sanitize_fixerio', $plugin_plugins, 'currency_exchange_for_woocommerce');
-        $this->loader->add_filter('berocket_ce_apis_sanitize_floatrates', $plugin_plugins, 'currency_exchange_for_woocommerce');
+        $this->loader->add_filter(
+            'berocket_ce_apis_sanitize_oer',
+            $plugin_plugins,
+            'currency_exchange_for_woocommerce'
+        );
+        $this->loader->add_filter(
+            'berocket_ce_apis_sanitize_currencylayer',
+            $plugin_plugins,
+            'currency_exchange_for_woocommerce'
+        );
+        $this->loader->add_filter(
+            'berocket_ce_apis_sanitize_fixerio',
+            $plugin_plugins,
+            'currency_exchange_for_woocommerce'
+        );
+        $this->loader->add_filter(
+            'berocket_ce_apis_sanitize_floatrates',
+            $plugin_plugins,
+            'currency_exchange_for_woocommerce'
+        );
     }
 
     /**
@@ -282,5 +357,4 @@ class Zimrate
     {
         return $this->version;
     }
-
 }

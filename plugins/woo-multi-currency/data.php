@@ -1,12 +1,11 @@
 <?php
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit();
 }
 
 class Zimrate_Woo_Multi_Currency_Data extends WOOMULTI_CURRENCY_F_Data
 {
-
     /**
      * Get country code by currency
      *
@@ -15,13 +14,11 @@ class Zimrate_Woo_Multi_Currency_Data extends WOOMULTI_CURRENCY_F_Data
      */
     public function get_country_data($currency_code)
     {
-
         if (in_array($currency_code, zimrate_get_isos())) {
             $currency_code = 'ZWD';
         }
 
         return parent::get_country_data($currency_code);
-
     }
 
     /**
@@ -30,7 +27,6 @@ class Zimrate_Woo_Multi_Currency_Data extends WOOMULTI_CURRENCY_F_Data
      */
     public function get_country_freebase($country_code)
     {
-
         if (in_array($country_code, zimrate_get_isos())) {
             $data = '/m/02c1rx';
         } else {
@@ -39,5 +35,4 @@ class Zimrate_Woo_Multi_Currency_Data extends WOOMULTI_CURRENCY_F_Data
 
         return $data;
     }
-
 }

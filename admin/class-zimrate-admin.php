@@ -23,7 +23,6 @@
  */
 class Zimrate_Admin
 {
-
     /**
      * The ID of this plugin.
      *
@@ -52,10 +51,8 @@ class Zimrate_Admin
      */
     public function __construct($plugin_name, $version)
     {
-
         $this->plugin_name = $plugin_name;
-        $this->version     = $version;
-
+        $this->version = $version;
     }
 
     /**
@@ -65,14 +62,24 @@ class Zimrate_Admin
      */
     public function enqueue_styles()
     {
-
         switch (get_current_screen()->id) {
             case 'toplevel_page_zimrate-dashboard':
-                wp_enqueue_style($this->plugin_name . '-dashboard', plugin_dir_url(__FILE__) . 'css/zimrate-dashboard.css', array(), $this->version, 'all');
+                wp_enqueue_style(
+                    $this->plugin_name . '-dashboard',
+                    plugin_dir_url(__FILE__) . 'css/zimrate-dashboard.css',
+                    [],
+                    $this->version,
+                    'all'
+                );
             default:
-                wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/zimrate-admin.css', array(), $this->version, 'all');
+                wp_enqueue_style(
+                    $this->plugin_name,
+                    plugin_dir_url(__FILE__) . 'css/zimrate-admin.css',
+                    [],
+                    $this->version,
+                    'all'
+                );
         }
-
     }
 
     /**
@@ -82,13 +89,17 @@ class Zimrate_Admin
      */
     public function enqueue_scripts()
     {
-
         switch (get_current_screen()->id) {
             case 'toplevel_page_zimrate-dashboard':
-                wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/zimrate-admin.js', array(), $this->version, false);
+                wp_enqueue_script(
+                    $this->plugin_name,
+                    plugin_dir_url(__FILE__) . 'js/zimrate-admin.js',
+                    [],
+                    $this->version,
+                    false
+                );
                 break;
         }
-
     }
 
     /**
@@ -98,11 +109,24 @@ class Zimrate_Admin
      */
     public function on_admin_menu()
     {
-        add_menu_page(__('ZimRate', $this->plugin_name), __('ZimRate', $this->plugin_name), 'manage_options', 'zimrate-dashboard', array($this, 'zimrate'), plugin_dir_url(__FILE__) . 'img/logo.svg');
+        add_menu_page(
+            __('ZimRate', $this->plugin_name),
+            __('ZimRate', $this->plugin_name),
+            'manage_options',
+            'zimrate-dashboard',
+            [$this, 'zimrate'],
+            plugin_dir_url(__FILE__) . 'img/logo.svg'
+        );
 
         //options
-        add_submenu_page('zimrate-dashboard', __('Options', $this->plugin_name), __('Options', $this->plugin_name), 'manage_options', 'zimrate-options', array($this, 'zimrateOptions'));
-
+        add_submenu_page(
+            'zimrate-dashboard',
+            __('Options', $this->plugin_name),
+            __('Options', $this->plugin_name),
+            'manage_options',
+            'zimrate-options',
+            [$this, 'zimrateOptions']
+        );
     }
 
     /**
@@ -110,8 +134,8 @@ class Zimrate_Admin
      */
     public function zimrate()
     {
-
-        include plugin_dir_path(__FILE__) . 'partials/zimrate-admin-display.php';
+        include plugin_dir_path(__FILE__) .
+            'partials/zimrate-admin-display.php';
     }
 
     /**
@@ -127,10 +151,19 @@ class Zimrate_Admin
      */
     public function register_setting()
     {
-        register_setting('zimrate-options', 'zimrate-prefer', array('default' => 'mean'));
-        register_setting('zimrate-options', 'zimrate-interval', array('default' => 'hourly'));
-        register_setting('zimrate-options', 'zimrate-cushion', array('type' => 'integer', 'default' => 1));
-        register_setting('zimrate-options', 'zimrate-currencies', array('default' => 'RBZ'));
+        register_setting('zimrate-options', 'zimrate-prefer', [
+            'default' => 'mean',
+        ]);
+        register_setting('zimrate-options', 'zimrate-interval', [
+            'default' => 'hourly',
+        ]);
+        register_setting('zimrate-options', 'zimrate-cushion', [
+            'type' => 'integer',
+            'default' => 1,
+        ]);
+        register_setting('zimrate-options', 'zimrate-currencies', [
+            'default' => 'RBZ',
+        ]);
     }
 
     /**
@@ -138,13 +171,14 @@ class Zimrate_Admin
      */
     public function add_settings_section()
     {
-
         add_settings_section(
             'zimrate-options-section',
             __('ZimRate Options', $this->plugin_name),
             function () {
-
-                $title = __('ZimRate exchange rate retrievial options.', $this->plugin_name);
+                $title = __(
+                    'ZimRate exchange rate retrievial options.',
+                    $this->plugin_name
+                );
 
                 $this->print_html_label($title);
             },
@@ -160,15 +194,18 @@ class Zimrate_Admin
     private function array_to_attributes($attr)
     {
         $attributes = '';
-        $delimeter  = '';
+        $delimeter = '';
 
         foreach ($attr as $attribute => $value) {
-
             if (!empty($value)) {
-                $attributes .= $delimeter . esc_attr($attribute) . '="' . esc_attr($value) . '"';
+                $attributes .=
+                    $delimeter .
+                    esc_attr($attribute) .
+                    '="' .
+                    esc_attr($value) .
+                    '"';
                 $delimeter = ' ';
             }
-
         }
 
         return $attributes;
@@ -182,13 +219,11 @@ class Zimrate_Admin
      */
     private function print_html_input($attributes, $desc = '')
     {
-
-        print('<input ' . $this->array_to_attributes($attributes) . '>');
+        print '<input ' . $this->array_to_attributes($attributes) . '>';
 
         if ($desc) {
-            $this->print_html_label($desc, array('class' => 'description'));
+            $this->print_html_label($desc, ['class' => 'description']);
         }
-
     }
 
     /**
@@ -199,23 +234,29 @@ class Zimrate_Admin
      * @param string $selecte
      * @param string $desc
      */
-    private function print_html_select($attributes, $options, $selected = true, $desc = '')
-    {
-
-        print('<select ' . $this->array_to_attributes($attributes) . '>');
+    private function print_html_select(
+        $attributes,
+        $options,
+        $selected = true,
+        $desc = ''
+    ) {
+        print '<select ' . $this->array_to_attributes($attributes) . '>';
 
         foreach ($options as $key => $value) {
-            print('<option value="' . esc_attr($key) . '" ' . selected($key, $selected, false) . '>');
-            print(esc_html($value));
-            print('</option>');
+            print '<option value="' .
+                esc_attr($key) .
+                '" ' .
+                selected($key, $selected, false) .
+                '>';
+            print esc_html($value);
+            print '</option>';
         }
 
-        print('</select>');
+        print '</select>';
 
         if ($desc) {
-            $this->print_html_label($desc, array('class' => 'description'));
+            $this->print_html_label($desc, ['class' => 'description']);
         }
-
     }
 
     /**
@@ -227,93 +268,110 @@ class Zimrate_Admin
             'zimrate-prefer',
             __('Zimrate Rate', $this->plugin_name),
             function () {
-
-                $attr = array(
+                $attr = [
                     'name' => 'zimrate-prefer',
                     'id' => 'zimrate-prefer',
-                    'required' => 'true'
-                );
+                    'required' => 'true',
+                ];
 
-                $options = array(
+                $options = [
                     'max' => 'Maximum',
                     'mean' => 'Average',
-                    'min' => 'Minimum'
+                    'min' => 'Minimum',
+                ];
+
+                $this->print_html_select(
+                    $attr,
+                    $options,
+                    get_option('zimrate-prefer', 'mean'),
+                    __('The exchange rate value to use.', $this->plugin_name)
                 );
-
-                $this->print_html_select($attr, $options, get_option('zimrate-prefer', 'mean'), __('The exchange rate value to use.', $this->plugin_name));
-
             },
             'zimrate-options',
             'zimrate-options-section',
-            array('label_for' => 'zimrate-prefer')
+            ['label_for' => 'zimrate-prefer']
         );
 
         add_settings_field(
             'zimrate-interval',
             __('Refresh Interval', $this->plugin_name),
             function () {
-
-                $attr = array(
+                $attr = [
                     'name' => 'zimrate-interval',
                     'id' => 'zimrate-interval',
-                    'required' => 'true'
+                    'required' => 'true',
+                ];
+
+                $this->print_html_select(
+                    $attr,
+                    zimrate_intervals(),
+                    get_option('zimrate-interval', MINUTE_IN_SECONDS),
+                    __('The refresh interval', $this->plugin_name)
                 );
-
-                $this->print_html_select($attr, zimrate_intervals(), get_option('zimrate-interval', HOUR_IN_SECONDS), __('The refresh interval', $this->plugin_name));
-
             },
             'zimrate-options',
             'zimrate-options-section',
-            array('label_for' => 'zimrate-interval')
+            ['label_for' => 'zimrate-interval']
         );
 
         add_settings_field(
             'zimrate-cushion',
             __('Rate Cushion', $this->plugin_name),
             function () {
-
-                $attr = array(
+                $attr = [
                     'type' => 'number',
                     'value' => intval(get_option('zimrate-cushion', 1)),
                     'name' => 'zimrate-cushion',
                     'id' => 'zimrate-cushion',
-                    'required' => 'true'
+                    'required' => 'true',
+                ];
+
+                $this->print_html_input(
+                    $attr,
+                    __(
+                        'The percentage value to apply on retrived rate as a cushion.',
+                        $this->plugin_name
+                    )
                 );
-
-                $this->print_html_input($attr, __('The percentage value to apply on retrived rate as a cushion.', $this->plugin_name));
-
             },
             'zimrate-options',
             'zimrate-options-section',
-            array('label_for' => 'zimrate-cushion')
+            ['label_for' => 'zimrate-cushion']
         );
 
         add_settings_field(
             'zimrate-currencies',
             __('Preferred Rate', $this->plugin_name),
             function () {
-
-                $attr = array(
+                $attr = [
                     'name' => 'zimrate-currencies',
                     'id' => 'zimrate-currencies',
-                    'required' => 'true'
+                    'required' => 'true',
+                ];
+
+                $this->print_html_select(
+                    $attr,
+                    zimrate_supported_currencies(),
+                    zimrate_get_selected_currency(),
+                    __('The preferred exchange rate', $this->plugin_name)
                 );
-
-                $this->print_html_select($attr, zimrate_supported_currencies(), zimrate_get_selected_currency(), __('The preferred exchange rate', $this->plugin_name));
-
             },
             'zimrate-options',
             'zimrate-options-section',
-            array('label_for' => 'zimrate-currencies')
+            ['label_for' => 'zimrate-currencies']
         );
     }
 
     /**
      * Print html text inside a paragram element
      */
-    public function print_html_label($label, $attributes = array())
+    public function print_html_label($label, $attributes = [])
     {
-        print('<p ' . $this->array_to_attributes($attributes) . '>' . $label . '</p>');
+        print '<p ' .
+            $this->array_to_attributes($attributes) .
+            '>' .
+            $label .
+            '</p>';
     }
 
     /**
@@ -324,8 +382,10 @@ class Zimrate_Admin
      */
     public function add_woocommerce_currencies($currencies)
     {
-
-        $currencies[zimrate_get_iso()] = __('Zimbabwean Dollar', $this->plugin_name);
+        $currencies[zimrate_get_iso()] = __(
+            'Zimbabwean Dollar',
+            $this->plugin_name
+        );
 
         return $currencies;
     }
@@ -338,10 +398,8 @@ class Zimrate_Admin
      */
     public function add_woocommerce_currency_symbols($currencies)
     {
-
         $currencies[zimrate_get_iso()] = '&#36;';
 
         return $currencies;
     }
-
 }

@@ -26,6 +26,11 @@
  */
 
 // If uninstall not called from WordPress, then exit.
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-	exit;
+if (!defined('WP_UNINSTALL_PLUGIN')) {
+    exit();
 }
+
+delete_option('zimrate-prefer');
+delete_option('zimrate-interval');
+delete_option('zimrate-cushion');
+delete_option('zimrate-currencies');
