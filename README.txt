@@ -1,41 +1,32 @@
-=== Plugin Name ===
-Contributors: (this should be a list of wordpress.org userid's)
+=== ZimRate ===
+Contributors: (tygalive)
 Donate link: https://tyganeutronics.com
-Tags: comments, spam
-Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 4.3
+Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
+Requires at least: 4.0.0
+Tested up to: 5.5
+Requires PHP: 5.6
+Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+All Zimbabwean exchange rates from multiple sites in one plugin. No need to scrounge the internet for the current days rate.
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
+Add automatic Zimbabwean currency conversion to your site. 
+This plugin modifies the result from listed plugins api calls before they are submitted to plugin.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+This plugin directly supports these plugins:
 
-A few notes about the sections above:
+*   [Multi Currency for WooCommerce](https://wordpress.org/plugins/woo-multi-currency "Multi Currency for WooCommerce")
+*   [Multi Currency for WooCommerce](https://wordpress.org/plugins/wc-multi-currency "Multi Currency for WooCommerce")
+*   [CurrencyConverter](https://wordpress.org/plugins/currencyconverter "CurrencyConverter")
+*   [Currency Switcher for WooCommerce](https://wordpress.org/plugins/currency-switcher-woocommerce "Currency Switcher for WooCommerce")
+*   [Currency Exchange for WooCommerce](https://wordpress.org/plugins/currency-exchange-for-woocommerce "Currency Exchange for WooCommerce")
 
-*   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
-*   "Tags" is a comma separated list of tags that apply to the plugin
-*   "Requires at least" is the lowest version that the plugin will work on
-*   "Tested up to" is the highest version that you've *successfully used to test the plugin*. Note that it might work on
-higher versions... this is just the highest one you've verified.
-*   Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk," if you use `/trunk/` for
-stable.
+All Zimbabwean rates are obtained from [ZimRate](http://zimrate.tyganeutronics.com "Zimrate") and caching is provided in plugin to avoid overloading the server though you are free to disable caching.
 
-    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
-if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
-for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
-is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
-your in-development version, without having that information incorrectly disclosed about the current stable version
-that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
-
-    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
-you put the stable version, in order to eliminate any doubt.
+Note: This plugin is not directly a currency switcher (as that would be redundant considering the number of options on wordpress.org).
 
 == Installation ==
 
@@ -49,66 +40,35 @@ e.g.
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
+= What's this? =
 
-An answer to that question.
+A currency injector for wordpress plugins. When said plugin requests for latest currency rates using wordpress' functions, this plugin modifes the result before it is submitted to the requesting plugin.
 
-= What about foo bar? =
+= Where's my favourate plugin? =
 
-Answer to foo bar dilemma.
+Though have tried to cover as many plugins as possible, there is a limitation on the plugins that can be directly supported.
+This plugin relies on a plugin using wordpress' internal http_request feature which has hooks to modify the result or if said plugin has hooks to modify result before use.
+If you have a plugin that you want added, you are free to contact.
+
+= What if i need feature X? =
+
+You are free to contact and will happily add feature X as long as it is in the scope of the plugin.
+
+= Easy Digital Downloads is not supported? =
+
+Though would have wanted to supported Easy Digital Downloads, could not get hold of a currency convertor for it.
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+1. Zimrate Dashboard.
+2. Zimrate options screen
 
 == Changelog ==
 
 = 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
+* Initial Release.
 
 == Upgrade Notice ==
 
 = 1.0 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
-
-= 0.5 =
-This version fixes a security related bug.  Upgrade immediately.
-
-== Arbitrary section ==
-
-You may provide arbitrary sections, in the same format as the ones above.  This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation."  Arbitrary sections will be shown below the built-in sections outlined above.
-
-== A brief Markdown Example ==
-
-Ordered list:
-
-1. Some feature
-1. Another feature
-1. Something else about the plugin
-
-Unordered list:
-
-* something
-* something else
-* third thing
-
-Here's a link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
-Titles are optional, naturally.
-
-[markdown syntax]: http://daringfireball.net/projects/markdown/syntax
-            "Markdown is what the parser uses to process much of the readme file"
-
-Markdown uses email style notation for blockquotes and I've been told:
-> Asterisks for *emphasis*. Double it up  for **strong**.
-
-`<?php code(); // goes in backticks ?>`
+Initial Release.

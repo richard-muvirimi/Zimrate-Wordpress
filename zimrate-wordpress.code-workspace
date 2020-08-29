@@ -1,15 +1,12 @@
 {
-	"folders": [
-		{
-			"path": "../../.."
-		},
-		{
-			"path": "../../../../zimrate"
-		},
-		{
-			"name": "zimrate",
-			"path": "."
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "../../.."
+    },
+    {
+      "name": "zimrate",
+      "path": "."
+    }
+  ],
+  "settings": {}
 }
