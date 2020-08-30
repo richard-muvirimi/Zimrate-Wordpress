@@ -4,6 +4,10 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+/**
+ * This class overides the base class to provide upto date data
+ */
+
 class Zimrate_Woo_Multi_Currency_Data extends WOOMULTI_CURRENCY_F_Data
 {
     /**

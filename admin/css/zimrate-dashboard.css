@@ -3,47 +3,57 @@
  * included in this file.
  */
 
-.zimrate h1,
-.zimrate h2,
-.zimrate h3,
-.zimrate h4,
-.zimrate h5,
-.zimrate h6 {
+div.zimrate h1,
+div.zimrate h2,
+div.zimrate h3,
+div.zimrate h4,
+div.zimrate h5,
+div.zimrate h6 {
   text-align: center;
 }
 
-.zimrate {
+div.zimrate {
   padding-right: 20px;
 }
 
-.zimrate table {
+div.zimrate table {
   border-collapse: collapse;
   width: 100%;
 }
 
-.zimrate th,
-.zimrate td {
+div.zimrate th,
+div.zimrate td {
   text-align: center;
   border: 1px solid #ddd;
   padding: 8px;
 }
 
-.zimrate tr:nth-child(even) {
+div.zimrate tr:nth-child(even) {
   background-color: white;
 }
 
-.zimrate tbody tr:hover {
+div.zimrate tbody tr:hover {
   background-color: #ddd;
 }
 
-.zimrate th {
+div.zimrate th {
   padding-top: 12px;
   padding-bottom: 12px;
   background-color: #242830;
   color: white;
 }
 
-.zimrate-plugins,
-.zimrate-rates {
+div.zimrate-plugins,
+div.zimrate-rates,
+div.zimrate-shortcode {
   margin: 20px 0;
+}
+
+div.zimrate-shortcode {
+  padding: 0 20px;
+}
+
+ul.zimrate-shortcode-list {
+  padding: 0 20px;
+  list-style: circle;
 }

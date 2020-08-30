@@ -11,7 +11,9 @@
  * @since      1.0.0
  */
 ?>
-
+<h2>
+    <?php _e('Supported Plugins', $this->plugin_name); ?>
+</h2>
 <div class="zimrate-plugins" style="overflow-x:auto;">
     <table class="zimrate-plugins-table">
         <thead>

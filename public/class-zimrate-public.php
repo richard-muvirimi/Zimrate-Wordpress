@@ -54,20 +54,39 @@ class Zimrate_Public
     }
 
     /**
-     * Register the stylesheets for the public-facing side of the site.
+     * Process rate short code
      *
+     * @param array $attr
+     * @return string
      * @since    1.0.0
      */
-    public function enqueue_styles()
+    public function currency_shortcode($attr)
     {
-    }
+        $attributes = shortcode_atts(
+            [
+                'currency' => zimrate_get_selected_currency(),
+                'value' => 1,
+                'precision' => 2,
+                'format' => 'no',
+                'cushion' => 'yes',
+            ],
+            $attr,
+            zimrate_get_shortcode()
+        );
 
-    /**
-     * Register the JavaScript for the public-facing side of the site.
-     *
-     * @since    1.0.0
-     */
-    public function enqueue_scripts()
-    {
+        $rate =
+            zimrate_get_rate($attributes['currency']) * $attributes['value'];
+
+        if ($attributes['cushion'] == 'yes') {
+            $rate = zimrate_apply_cushion($rate);
+        }
+
+        if ($attributes['format'] == 'yes') {
+            $rate = number_format_i18n($rate, $attributes['precision']);
+        } else {
+            $rate = round($rate, $attributes['precision']);
+        }
+
+        return $rate;
     }
 }

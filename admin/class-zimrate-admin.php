@@ -105,7 +105,7 @@ class Zimrate_Admin
     /**
      * On create the about menu
      *
-     * @return void
+     * @since 1.0.0
      */
     public function on_admin_menu()
     {
@@ -131,6 +131,8 @@ class Zimrate_Admin
 
     /**
      * Render the main page
+     *
+     * @since 1.0.0
      */
     public function zimrate()
     {
@@ -140,6 +142,8 @@ class Zimrate_Admin
 
     /**
      * Render the options page
+     *
+     * @since 1.0.0
      */
     public function zimrateOptions()
     {
@@ -148,6 +152,8 @@ class Zimrate_Admin
 
     /**
      * Register all app options
+     *
+     * @since 1.0.0
      */
     public function register_setting()
     {
@@ -168,6 +174,8 @@ class Zimrate_Admin
 
     /**
      * Add a section for options
+     *
+     * @since 1.0.0
      */
     public function add_settings_section()
     {
@@ -187,9 +195,11 @@ class Zimrate_Admin
     }
 
     /**
-     * Converts a key value list to ann attribute string
+     * Converts a key value list to an attribute string
      *
+     * @since 1.0.0
      * @param array $attr
+     * @return string
      */
     private function array_to_attributes($attr)
     {
@@ -214,6 +224,7 @@ class Zimrate_Admin
     /**
      * Print an html input element
      *
+     * @since 1.0.0
      * @param array  $attributes
      * @param string $desc
      */
@@ -229,6 +240,7 @@ class Zimrate_Admin
     /**
      * Print an html select element
      *
+     * @since 1.0.0
      * @param array  $attributes
      * @param array  $options
      * @param string $selecte
@@ -261,6 +273,8 @@ class Zimrate_Admin
 
     /**
      * Add plugin settings fields
+     *
+     * @since 1.0.0
      */
     public function add_settings_fields()
     {
@@ -272,6 +286,7 @@ class Zimrate_Admin
                     'name' => 'zimrate-prefer',
                     'id' => 'zimrate-prefer',
                     'required' => 'true',
+                    'style' => 'width: 100%;'
                 ];
 
                 $options = [
@@ -300,13 +315,14 @@ class Zimrate_Admin
                     'name' => 'zimrate-interval',
                     'id' => 'zimrate-interval',
                     'required' => 'true',
+                    'style' => 'width: 100%;'
                 ];
 
                 $this->print_html_select(
                     $attr,
                     zimrate_intervals(),
                     get_option('zimrate-interval', MINUTE_IN_SECONDS),
-                    __('The refresh interval', $this->plugin_name)
+                    __('The refresh interval (Rates will be cached for this long)', $this->plugin_name)
                 );
             },
             'zimrate-options',
@@ -320,10 +336,11 @@ class Zimrate_Admin
             function () {
                 $attr = [
                     'type' => 'number',
-                    'value' => intval(get_option('zimrate-cushion', 1)),
+                    'value' => intval(get_option('zimrate-cushion', 5)),
                     'name' => 'zimrate-cushion',
                     'id' => 'zimrate-cushion',
                     'required' => 'true',
+                    'style' => 'max-width: 25rem; width: 100%;'
                 ];
 
                 $this->print_html_input(
@@ -347,6 +364,7 @@ class Zimrate_Admin
                     'name' => 'zimrate-currencies',
                     'id' => 'zimrate-currencies',
                     'required' => 'true',
+                    'style' => 'width: 100%;'
                 ];
 
                 $this->print_html_select(
@@ -364,6 +382,8 @@ class Zimrate_Admin
 
     /**
      * Print html text inside a paragram element
+     *
+     * @since 1.0.0
      */
     public function print_html_label($label, $attributes = [])
     {
@@ -377,6 +397,7 @@ class Zimrate_Admin
     /**
      * Add Zimbabwean Currency to woocommerce
      *
+     * @since 1.0.0
      * @param  array   $currencies
      * @return array
      */
@@ -393,6 +414,7 @@ class Zimrate_Admin
     /**
      * Add Zimbabwean Currency Symbol to woocommerce
      *
+     * @since 1.0.0
      * @param  array   $currencies
      * @return array
      */

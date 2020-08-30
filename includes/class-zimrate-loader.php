@@ -42,6 +42,15 @@ class Zimrate_Loader
     protected $filters;
 
     /**
+     * The array of short_codes to register with WordPress.
+     *
+     * @since    1.0.0
+     * @access   protected
+     * @var      array    $short_codes    The short_codes to register with WordPress to fire when the plugin loads.
+     */
+    protected $short_codes;
+
+    /**
      * Initialize the collections used to maintain the actions and filters.
      *
      * @since    1.0.0
@@ -50,6 +59,7 @@ class Zimrate_Loader
     {
         $this->actions = [];
         $this->filters = [];
+        $this->short_codes = [];
     }
 
     /**
@@ -103,6 +113,26 @@ class Zimrate_Loader
             $callback,
             $priority,
             $accepted_args
+        );
+    }
+
+    /**
+     * Add a new short_codes to the collection to be registered with WordPress.
+     *
+     * @since    1.0.0
+     * @param    string               $hook             The name of the short_code that is being registered.
+     * @param    object               $component        A reference to the instance of the object on which the short_code is defined.
+     * @param    string               $callback         The name of the function definition on the $component.
+     */
+    public function add_shortcode($hook, $component, $callback)
+    {
+        $this->short_codes = $this->add(
+            $this->short_codes,
+            $hook,
+            $component,
+            $callback,
+            null,
+            null
         );
     }
 
@@ -162,6 +192,13 @@ class Zimrate_Loader
                 $hook['priority'],
                 $hook['accepted_args']
             );
+        }
+
+        foreach ($this->short_codes as $hook) {
+            add_shortcode($hook['hook'], [
+                $hook['component'],
+                $hook['callback'],
+            ]);
         }
     }
 }

@@ -59,10 +59,10 @@ class Zimrate_Plugins
      * Filters the HTTP API response immediately before the response is returned.
      *
      * @since    1.0.0
-     *
      * @param array  $response    HTTP response.
      * @param array  $parsed_args HTTP request arguments.
      * @param string $url         The request URL.
+     * @return array|WP_Error The response or WP_Error on failure.
      */
     public function inject_http_response($response, $parsed_args, $url)
     {
@@ -100,9 +100,7 @@ class Zimrate_Plugins
                     );
                     $rates = json_decode($response['body'], true);
 
-                    $rates['Realtime Currency Exchange Rate'][
-                        '5. Exchange Rate'
-                    ] = $rate;
+                    $rates['Realtime Currency Exchange Rate']['5. Exchange Rate'] = $rate;
 
                     $response['body'] = json_encode($rates);
                 }
@@ -124,12 +122,14 @@ class Zimrate_Plugins
     }
 
     /**
-     * Convert specifiedy currency
+     * Convert requested currency
      *
+     * @since 1.0.0
      * @param string $from
      * @param string $to
      * @param array  $parsed_args HTTP request arguments.
      * @param string $url         The request URL.
+     * @return float
      */
     private function convert_to_currency($from, $to, $parsed_args, $url)
     {
@@ -159,28 +159,17 @@ class Zimrate_Plugins
             }
         }
 
-        return $this->apply_cushion($rate);
-    }
-
-    /**
-     * Apply rate cushion
-     *
-     * @param  string   $rate
-     * @return string
-     */
-    private function apply_cushion($rate)
-    {
-        $cushion = get_option('zimrate-cushion', 1);
-
-        return $rate + ($cushion * $rate) / 100;
+        return zimrate_apply_cushion($rate);
     }
 
     /**
      * Remote fetch content
      *
+     * @since 1.0.0
      * @param string $base
      * @param array  $parsed_args HTTP request arguments.
      * @param string $url         The request URL.
+     * @return array|WP_Error The response or WP_Error on failure.
      */
     private function remote_fetch($base, $parsed_args, $url)
     {
@@ -210,17 +199,32 @@ class Zimrate_Plugins
     }
 
     /**
+     * Get url before parameters
+     *
+     * @since 1.0.0
      * @param string $url
+     * @return string
      */
     private function get_base_url($url)
     {
-        return explode('?', $url)[0];
+        $url_parts = parse_url($url);
+        $constructed_url =
+            $url_parts['scheme'] .
+            '://' .
+            $url_parts['host'] .
+            (isset($url_parts['path']) ? $url_parts['path'] : '');
+
+        return $constructed_url;
     }
 
     /**
+     * Convert rate to Usd
+     *
+     * @since 1.0.0
      * @param string $base
      * @param array  $parsed_args HTTP request arguments.
      * @param string $url         The request URL.
+     * @return array
      */
     private function request_rate_to_usd($base, $parsed_args, $url)
     {
@@ -238,9 +242,7 @@ class Zimrate_Plugins
                 if (!empty($codes)) {
                     $codes = json_decode($codes, true);
 
-                    return $codes['Realtime Currency Exchange Rate'][
-                        '5. Exchange Rate'
-                    ] ?:
+                    return $codes['Realtime Currency Exchange Rate']['5. Exchange Rate'] ?:
                         1;
                 }
 
@@ -264,6 +266,8 @@ class Zimrate_Plugins
 
     /**
      * On plugins loaded
+     *
+     * @since 1.0.0
      */
     public function plugins_loaded()
     {
@@ -294,10 +298,14 @@ class Zimrate_Plugins
      */
 
     /**
+     * Convert rate to specified currency
+     *
+     * @since 1.0.0
      * @param string $rate
      * @param string $server
      * @param string $from
      * @param string $to
+     * @return float
      */
     public function currency_switcher_woocommerce($rate, $server, $from, $to)
     {
@@ -336,16 +344,19 @@ class Zimrate_Plugins
                 }
             }
 
-            $rate = $this->apply_cushion($rate);
+            $rate = zimrate_apply_cushion($rate);
         }
 
         return $rate;
     }
 
     /**
+     * Fetch rate in relation to usd
+     *
+     * @since 1.0.0
      * @param  $server
      * @param  $currency
-     * @return mixed
+     * @return float
      */
     private function currency_switcher_woocommerce_to_usd($server, $currency)
     {
@@ -390,9 +401,11 @@ class Zimrate_Plugins
      */
 
     /**
-     * filter rates
+     * provide exchange rates for plugin
      *
+     * @since 1.0.0
      * @param array $rates
+     * @return array
      */
     public function currency_exchange_for_woocommerce($rates)
     {

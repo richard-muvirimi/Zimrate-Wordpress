@@ -19,13 +19,15 @@ This plugin modifies the result from listed plugins api calls before they are su
 
 This plugin directly supports these plugins:
 
-- [Multi Currency for WooCommerce](https://wordpress.org/plugins/woo-multi-currency 'Multi Currency for WooCommerce')
-- [Multi Currency for WooCommerce](https://wordpress.org/plugins/wc-multi-currency 'Multi Currency for WooCommerce')
-- [CurrencyConverter](https://wordpress.org/plugins/currencyconverter 'CurrencyConverter')
-- [Currency Switcher for WooCommerce](https://wordpress.org/plugins/currency-switcher-woocommerce 'Currency Switcher for WooCommerce')
-- [Currency Exchange for WooCommerce](https://wordpress.org/plugins/currency-exchange-for-woocommerce 'Currency Exchange for WooCommerce')
+- [Multi Currency for WooCommerce](https://wordpress.org/plugins/woo-multi-currency "Multi Currency for WooCommerce")
+- [Multi Currency for WooCommerce](https://wordpress.org/plugins/wc-multi-currency "Multi Currency for WooCommerce")
+- [CurrencyConverter](https://wordpress.org/plugins/currencyconverter "CurrencyConverter")
+- [Currency Switcher for WooCommerce](https://wordpress.org/plugins/currency-switcher-woocommerce "Currency Switcher for WooCommerce")
+- [Currency Exchange for WooCommerce](https://wordpress.org/plugins/currency-exchange-for-woocommerce "Currency Exchange for WooCommerce")
 
-All Zimbabwean rates are obtained from [ZimRate](http://zimrate.tyganeutronics.com 'Zimrate') and caching is provided in plugin to avoid overloading the server though you are free to disable caching.
+All Zimbabwean rates are obtained from [ZimRate](http://zimrate.tyganeutronics.com "Zimrate") and caching is provided in plugin to avoid overloading the server though you are free to disable caching.
+
+This plugin also provides a short code which you can use to display latest exchange rates without updating your posts to ever changing exchange rates.
 
 Note: This plugin is not directly a currency switcher (as that would be redundant considering the number of options on wordpress.org).
 

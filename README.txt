@@ -26,6 +26,8 @@ This plugin directly supports these plugins:
 
 All Zimbabwean rates are obtained from [ZimRate](http://zimrate.tyganeutronics.com "Zimrate") and caching is provided in plugin to avoid overloading the server though you are free to disable caching.
 
+This plugin also provides a short code which you can use to display latest exchange rates without updating your posts to ever changing exchange rates.
+
 Note: This plugin is not directly a currency switcher (as that would be redundant considering the number of options on wordpress.org).
 
 == Installation ==

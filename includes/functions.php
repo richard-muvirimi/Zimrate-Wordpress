@@ -2,6 +2,9 @@
 
 /**
  * Get Zimbabwean iso code
+ *
+ * @since 1.0.0
+ * @return string
  */
 function zimrate_get_iso()
 {
@@ -10,6 +13,9 @@ function zimrate_get_iso()
 
 /**
  * Get Zimbabwean iso codes
+ *
+ * @since 1.0.0
+ * @return array
  */
 function zimrate_get_isos()
 {
@@ -18,6 +24,10 @@ function zimrate_get_isos()
 
 /**
  * Get exchange rates
+ *
+ * @since 1.0.0
+ * @param string $currency
+ * @return array
  */
 function zimrate_get_rates($currency = false)
 {
@@ -29,7 +39,6 @@ function zimrate_get_rates($currency = false)
         $url = 'http://zimrate.tyganeutronics.com/api/v1';
 
         $args = [
-            'method' => 'POST',
             'body' => [
                 'prefer' => get_option('zimrate-prefer', 'mean'),
                 'currency' => $currency ? $currency : '',
@@ -38,33 +47,63 @@ function zimrate_get_rates($currency = false)
 
         $response = wp_remote_post($url, $args);
 
-        $rates = apply_filters(
-            'zimrate-rates',
-            json_decode($response['body'], true)
-        );
+        if (is_wp_error($response)) {
+            //get fall back rate
+            $rates = get_transient($key . '-backup');
+        } else {
+            $rates = apply_filters(
+                'zimrate-rates',
+                json_decode($response['body'], true)
+            );
 
-        set_transient(
-            $key,
-            $rates,
-            get_option('zimrate-interval', HOUR_IN_SECONDS)
-        );
+            set_transient(
+                $key,
+                $rates,
+                get_option('zimrate-interval', MINUTE_IN_SECONDS)
+            );
+
+            //if we fail to retrieve rates we will fall back to this
+            set_transient($key . '-backup', $rates, MONTH_IN_SECONDS);
+        }
     }
 
     return $rates;
 }
 
-//get exchange rate for currency
 /**
+ * get exchange rate for currency
+ *
+ * @since 1.0.0
  * @param string $currency
+ * @return float
  */
 function zimrate_get_rate($currency = false)
 {
     $rates = zimrate_get_rates($currency ?: zimrate_get_selected_currency());
 
-    return $rates['USD'][0]['rate'] ?: 1;
+    if ($rates === false) {
+        //if cannot retrieve rates completely
+        return 1;
+    } else {
+        if (isset($rates['USD']) && !empty($rates['USD'])) {
+            return $rates['USD'][0]['rate'];
+        } else {
+            //fall back to rbz else to one
+            if ($currency == 'RBZ') {
+                return 1;
+            } else {
+                return zimrate_get_rate('RBZ');
+            }
+        }
+    }
 }
 
-//check if woo multi currency is active
+/**
+ * check if woo multi currency is active
+ *
+ * @since 1.0.0
+ * @return bool
+ */
 function zimrate_woo_multi_currency_active()
 {
     return zimrate_plugin_active('woo-multi-currency/woo-multi-currency.php');
@@ -73,7 +112,9 @@ function zimrate_woo_multi_currency_active()
 /**
  * Check if a plugin is active
  *
+ * @since 1.0.0
  * @param string $plugin
+ * @return bool
  */
 function zimrate_plugin_active($plugin)
 {
@@ -84,6 +125,9 @@ function zimrate_plugin_active($plugin)
 
 /**
  * Get list of known supported plugins
+ *
+ * @since 1.0.0
+ * @return array
  */
 function zimrate_supported_plugins()
 {
@@ -113,6 +157,9 @@ function zimrate_supported_plugins()
 
 /**
  * Get list of currencies we will be directly supporting
+ *
+ * @since 1.0.0
+ * @return array
  */
 function zimrate_supported_currencies()
 {
@@ -126,6 +173,9 @@ function zimrate_supported_currencies()
 
 /**
  * Get zimrate intervals array
+ *
+ * @since 1.0.0
+ * @return array
  */
 function zimrate_intervals()
 {
@@ -145,7 +195,9 @@ function zimrate_intervals()
 /**
  * get host from url
  *
+ * @since 1.0.0
  * @param string $url
+ * @return string
  */
 function zimrate_url_host($url)
 {
@@ -155,6 +207,7 @@ function zimrate_url_host($url)
 /**
  * Get parameters from url
  *
+ * @since 1.0.0
  * @param  string   $url
  * @return string
  */
@@ -167,7 +220,38 @@ function zimrate_url_params($url)
     return $params;
 }
 
+/**
+ * Get selected currency
+ *
+ * @since 1.0.0
+ * @return string
+ */
 function zimrate_get_selected_currency()
 {
     return get_option('zimrate-currencies', 'RBZ');
+}
+
+/**
+ * Apply rate cushion
+ *
+ * @since 1.0.0
+ * @param  string   $rate
+ * @return string
+ */
+function zimrate_apply_cushion($rate)
+{
+    $cushion = get_option('zimrate-cushion', 1);
+
+    return apply_filters('zimrate-cushion', $rate + ($cushion * $rate) / 100);
+}
+
+/**
+ * Get the short code for currency output
+ *
+ * @since 1.0.0
+ * @return string
+ */
+function zimrate_get_shortcode()
+{
+    return 'zimrate';
 }
