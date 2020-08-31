@@ -33,6 +33,14 @@ Note: This plugin is not directly a currency switcher (as that would be redundan
 
 ### Installation
 
+##### Automatic installation
+
+Automatic installation is the easiest option -- WordPress will handle the file transfer, and you won’t need to leave your web browser. To do an automatic install of ZimRate, log in to your WordPress dashboard, navigate to the Plugins menu, and click “Add New.”
+
+In the search field type “ZimRate”, then click “Search Plugins.” Once you’ve found us, you can view details about it such as the point release, rating, and description. Most importantly of course, you can install it by! Clicking “Install Now,” and WordPress will take it from there.
+
+##### Manual installation
+
 1. Upload `/zimrate/` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 

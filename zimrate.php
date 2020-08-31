@@ -13,7 +13,7 @@
  * Plugin URI:        http://zimrate.tyganeutronics.com
  * Description:       All Zimbabwean exchange rates from multiple sites in one plugin. No need to scrounge the internet for the current days rate.
  * Version:           1.0.0
- * Author:            Richard Muvirimi
+ * Author:            Tyganeutronics
  * Author URI:        https://tyganeutronics.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
