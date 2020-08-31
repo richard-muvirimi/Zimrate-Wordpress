@@ -31,6 +31,26 @@ This plugin also provides a short code which you can use to display latest excha
 
 Note: This plugin is not directly a currency switcher (as that would be redundant considering the number of options on wordpress.org).
 
+### Third Party Services
+
+This plugin uses a few third party services to convert currencies originally not supported by [ZimRate](http://zimrate.tyganeutronics.com "ZimRate") to USD. This is done based on the url requested by supported plugin which may include currencies other than USD. Furthermore to reduce calculation errors (due to exchange rate variance), that supported plugin's api is used to get the related exchange rates as USD. These api calls are not done unless requested by the supported plugin.
+
+Listed below are supported plugins including how the api services they use are used by this plugin as well as their privacy policy and/or terms of service links:
+
+- [Multi Currency for WooCommerce](https://wordpress.org/plugins/woo-multi-currency "Multi Currency for WooCommerce")
+  - [villatheme.com](https://villatheme.com/ "villatheme.com") [Privacy Policy](https://villatheme.com/privacy-policy/ "Privacy Policy")
+  - When plugin requests for rates from above api, this plugin modifies the returned exchange rates to include the Zimbabwean currency and may go on to do another request to get the rate for requested currencies against the USD.
+- [Multi Currency for WooCommerce](https://wordpress.org/plugins/wc-multi-currency "Multi Currency for WooCommerce")
+  - [alphavantage.co](https://www.alphavantage.co "alphavantage.co") [Support](https://www.alphavantage.co/support/#support "Support")
+  - When plugin requests for rates from above api, this plugin modifies the returned exchange rates to include the Zimbabwean currency and may go on to do another request to get the rate for requested currencies against the USD.
+- [CurrencyConverter](https://wordpress.org/plugins/currencyconverter "CurrencyConverter")
+  - [exchangerate.guru](https://exchangerate.guru/ "exchangerate.guru") [Privacy Policy](https://exchangerate.guru/privacy-policy/ "Privacy Policy")
+  - When plugin requests for rates from above api, this plugin modifies the returned exchange rates to include the Zimbabwean Currency. The exchange rates are already rated against the USD so no further api call are done.
+- [Currency Switcher for WooCommerce](https://wordpress.org/plugins/currency-switcher-woocommerce "Currency Switcher for WooCommerce")
+  - Provides a filter to directly modify the returned exchange rates, though this plugin will use some of it's internal functions to get requested exchange rate in relation to USD through these function.
+- [Currency Exchange for WooCommerce](https://wordpress.org/plugins/currency-exchange-for-woocommerce "Currency Exchange for WooCommerce")
+  - Provides a filter to directly modify the returned exchange rates.
+
 ### Installation
 
 ##### Automatic installation
