@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Provide a admin area view for the plugin
  *
@@ -37,7 +38,7 @@
         </thead>
         <tbody>
 
-            <?php foreach (zimrate_supported_plugins() as $id => $data):
+            <?php foreach (zimrate_supported_plugins() as $id => $data) :
 
                 $active = zimrate_plugin_active($id);
                 $installed = file_exists(
@@ -50,67 +51,67 @@
                 }
                 $base_url = 'https://wordpress.org/plugins/' . dirname($id);
                 $url = $installed ? $plugin['PluginURI'] : $base_url;
-                ?>
-            <tr>
-                <td>
-                    <?php if ($active) {
-                        _e('&checkmark; Enabled', $this->plugin_name);
-                    } elseif (!$installed) {
-                        _e('Not Installed', $this->plugin_name);
-                    } else {
-                        _e('&cross; Disabled', $this->plugin_name);
-                    } ?>
-                </td>
-                <td>
-                <a href="<?php esc_attr_e($base_url); ?>">
-                    <?php if ($installed) {
-                        esc_html_e($plugin['Name']);
-                    } else {
-                        esc_attr_e($data['name']);
-                    } ?>
-                    </a>
-                </td>
-                <td>
-                    <?php if ($installed) {
-                        esc_attr_e($plugin['Version']);
-                    } else {
-                        echo '&hellip;';
-                    } ?>
-                </td>
-                <td>
-                    <?php if (!$installed) {
-                        printf(__('&cross; %s'), $data['tested']);
-                    } elseif (
-                        version_compare(
-                            $plugin['Version'],
-                            $data['tested'],
-                            '>='
-                        )
-                    ) {
-                        printf(__('&checkmark; %s'), $data['tested']);
-                    } else {
-                        printf(__('&cross; %s (Update)'), $data['tested']);
-                    } ?>
-                </td>
-                <td>
-                <a href="<?php esc_attr_e($url); ?>">
-                    <?php esc_attr_e(zimrate_url_host($url)); ?>
-                    </a>
-                </td>
-            </tr>
+            ?>
+                <tr>
+                    <td>
+                        <?php if ($active) {
+                            _e('&checkmark; Enabled', $this->plugin_name);
+                        } elseif (!$installed) {
+                            _e('Not Installed', $this->plugin_name);
+                        } else {
+                            _e('&cross; Disabled', $this->plugin_name);
+                        } ?>
+                    </td>
+                    <td>
+                        <a href="<?php esc_attr_e($base_url); ?>">
+                            <?php if ($installed) {
+                                esc_html_e($plugin['Name']);
+                            } else {
+                                esc_attr_e($data['name']);
+                            } ?>
+                        </a>
+                    </td>
+                    <td>
+                        <?php if ($installed) {
+                            esc_attr_e($plugin['Version']);
+                        } else {
+                            echo '&hellip;';
+                        } ?>
+                    </td>
+                    <td>
+                        <?php if (!$installed) {
+                            printf(__('&cross; %s'), $data['tested']);
+                        } elseif (
+                            version_compare(
+                                $plugin['Version'],
+                                $data['tested'],
+                                '>='
+                            )
+                        ) {
+                            printf(__('&checkmark; %s'), $data['tested']);
+                        } else {
+                            printf(__('&cross; %s (Update)'), $data['tested']);
+                        } ?>
+                    </td>
+                    <td>
+                        <a href="<?php esc_attr_e($url); ?>">
+                            <?php esc_attr_e(zimrate_url_host($url)); ?>
+                        </a>
+                    </td>
+                </tr>
             <?php
             endforeach; ?>
 
         </tbody>
         <tfoot>
-        <tr>
-            <td colspan="5">
-            <?php _e(
-                'You can use any of the above plugins and their rates will be automaitcally modified to include the Zimbabwean rate.',
-                $this->plugin_name
-            ); ?>
-            </td>
-        </tr>
+            <tr>
+                <td colspan="5">
+                    <?php _e(
+                        'You can use any of the above plugins and their rates will be automatically modified to include the Zimbabwean rate.',
+                        $this->plugin_name
+                    ); ?>
+                </td>
+            </tr>
         </tfoot>
     </table>
 </div>
