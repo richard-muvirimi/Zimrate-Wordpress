@@ -143,6 +143,7 @@ function zimrate_plugin_active($plugin)
  * Get list of known supported plugins
  *
  * @since 1.0.0
+ * @version 1.1.0
  * @return array
  */
 function zimrate_supported_plugins()
@@ -168,6 +169,10 @@ function zimrate_supported_plugins()
             'name' => 'Currency Exchange for WooCommerce',
             'tested' => '3.5.1.5',
         ],
+        'woocommerce-currency-switcher/index.php' => [
+            'name' => 'WOOCS - WooCommerce Currency Switcher',
+            'tested' => '1.3.1.1'
+        ]
     ]);
 }
 

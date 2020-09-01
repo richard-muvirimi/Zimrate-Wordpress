@@ -186,7 +186,7 @@ class Zimrate_Admin
             __('ZimRate Options', $this->plugin_name),
             function () {
                 $title = __(
-                    'ZimRate exchange rate retrievial options.',
+                    'ZimRate exchange rate retrieval options.',
                     $this->plugin_name
                 );
 
@@ -348,7 +348,7 @@ class Zimrate_Admin
                 $this->print_html_input(
                     $attr,
                     __(
-                        'The percentage value to apply on retrived rate as a cushion.',
+                        'The percentage value to apply on retrieved rate as a cushion.',
                         $this->plugin_name
                     )
                 );
@@ -400,15 +400,18 @@ class Zimrate_Admin
      * Add Zimbabwean Currency to woocommerce
      *
      * @since 1.0.0
+     * @version 1.1.0
      * @param  array   $currencies
      * @return array
      */
     public function add_woocommerce_currencies($currencies)
     {
-        $currencies[zimrate_get_iso()] = __(
-            'Zimbabwean Dollar',
-            $this->plugin_name
-        );
+        if (!isset($currencies[zimrate_get_iso()])) {
+            $currencies[zimrate_get_iso()] = __(
+                'Zimbabwean Dollar',
+                $this->plugin_name
+            );
+        }
 
         return $currencies;
     }
@@ -417,12 +420,15 @@ class Zimrate_Admin
      * Add Zimbabwean Currency Symbol to woocommerce
      *
      * @since 1.0.0
+     * @version 1.1.0
      * @param  array   $currencies
      * @return array
      */
     public function add_woocommerce_currency_symbols($currencies)
     {
-        $currencies[zimrate_get_iso()] = '&#36;';
+        if (!isset($currencies[zimrate_get_iso()])) {
+            $currencies[zimrate_get_iso()] = '&#36;';
+        }
 
         return $currencies;
     }

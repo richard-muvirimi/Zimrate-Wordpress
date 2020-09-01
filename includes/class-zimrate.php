@@ -251,6 +251,7 @@ class Zimrate
      *
      * @access   private
      * @since    1.0.0
+     * @version 1.1.0
      */
     private function define_plugins_hooks()
     {
@@ -303,6 +304,15 @@ class Zimrate
             'berocket_ce_apis_sanitize_floatrates',
             $plugin_plugins,
             'currency_exchange_for_woocommerce'
+        );
+
+        //woocommerce-currency-switcher
+        $this->loader->add_filter(
+            'woocs_add_custom_rate',
+            $plugin_plugins,
+            'woocs_add_custom_rate',
+            10,
+            3
         );
     }
 

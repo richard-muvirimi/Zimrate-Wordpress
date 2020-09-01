@@ -413,4 +413,77 @@ class Zimrate_Plugins
 
         return $rates;
     }
+
+    /**************************************************************************************************
+     * WOOCS - WooCommerce Currency Switcher
+     * ************************************************************************************************
+     */
+
+    /**
+     * Convert for plugin
+     *
+     * @since 1.1.0
+     * @param float|boolean $rate
+     * @param string $from
+     * @param string $to
+     * @return string
+     */
+    public function woocs_add_custom_rate($rate, $from, $to)
+    {
+
+        if (
+            in_array($from, zimrate_get_isos()) ||
+            in_array($to, zimrate_get_isos())
+        ) {
+
+            global $WOOCS;
+
+            $currency = get_option('zimrate-currencies', 'RBZ');
+
+            if (in_array($from, zimrate_get_isos())) {
+                if ($to == 'USD') {
+                    $rate = pow(zimrate_get_rate($currency), -1);
+                } else {
+                    //first change to usd
+                    $default_currency = $WOOCS->default_currency;
+                    $request_currency = $_REQUEST['currency_name'];
+
+                    $_REQUEST['currency_name'] = 'USD';
+                    $WOOCS->default_currency = $to;
+
+                    $rate = pow(
+                        zimrate_get_rate($currency) *
+                            $WOOCS->get_rate(),
+                        -1
+                    );
+
+                    $WOOCS->default_currency = $default_currency;
+                    $_REQUEST['currency_name'] = $request_currency;
+                }
+            } else {
+                if ($from == 'USD') {
+                    //to = iso
+                    $rate = zimrate_get_rate($currency);
+                } else {
+                    //first change to usd
+                    $default_currency = $WOOCS->default_currency;
+                    $request_currency = $_REQUEST['currency_name'];
+
+                    $_REQUEST['currency_name'] = 'USD';
+                    $WOOCS->default_currency = $from;
+
+                    $rate =
+                        zimrate_get_rate($currency) *
+                        $WOOCS->get_rate();
+
+                    $WOOCS->default_currency = $default_currency;
+                    $_REQUEST['currency_name'] = $request_currency;
+                }
+            }
+
+            $rate = zimrate_apply_cushion($rate);
+        }
+
+        return $rate;
+    }
 }

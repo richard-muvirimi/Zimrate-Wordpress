@@ -5,7 +5,7 @@ Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 Requires at least: 4.0.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,7 @@ This plugin directly supports these plugins:
 *   [CurrencyConverter](https://wordpress.org/plugins/currencyconverter "CurrencyConverter")
 *   [Currency Switcher for WooCommerce](https://wordpress.org/plugins/currency-switcher-woocommerce "Currency Switcher for WooCommerce")
 *   [Currency Exchange for WooCommerce](https://wordpress.org/plugins/currency-exchange-for-woocommerce "Currency Exchange for WooCommerce")
+*   [WOOCS - WooCommerce Currency Switcher](https://wordpress.org/plugins/woocommerce-currency-switcher "WOOCS - WooCommerce Currency Switcher")
 
 All Zimbabwean rates are obtained from [ZimRate](http://zimrate.tyganeutronics.com "Zimrate") and caching is provided in plugin to avoid overloading the server though you are free to disable caching.
 
@@ -46,9 +47,11 @@ Listed below are supported plugins including how the api services they use are u
   * [exchangerate.guru](https://exchangerate.guru/ "exchangerate.guru") [Privacy Policy](https://exchangerate.guru/privacy-policy/ "Privacy Policy")
   * When plugin requests for rates from above api, this plugin modifies the returned exchange rates to include the Zimbabwean Currency. The exchange rates are already rated against the USD so no further api call are done.
 * [Currency Switcher for WooCommerce](https://wordpress.org/plugins/currency-switcher-woocommerce "Currency Switcher for WooCommerce")
-  * Provides a filter to directly modify the returned exchange rates, though this plugin will use some of it's internal functions to get requested exchange rate in relation to USD through these functions.
+  * Provides a filter to directly modify the returned exchange rates, though this plugin will use some of it's internal functions to get requested exchange rate in relation to USD.
 * [Currency Exchange for WooCommerce](https://wordpress.org/plugins/currency-exchange-for-woocommerce "Currency Exchange for WooCommerce")
   * Provides a filter to directly modify the returned exchange rates.
+* [WOOCS - WooCommerce Currency Switcher](https://wordpress.org/plugins/woocommerce-currency-switcher "WOOCS - WooCommerce Currency Switcher")
+  * Provides a filter to directly modify the returned exchange rates, though this plugin will use some of it's internal functions to get requested exchange rate in relation to USD.
 
 == Installation ==
 
@@ -90,10 +93,13 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 
 == Changelog ==
 
-= 1.0 =
+= 1.1.0 =
+* add WOOCS - WooCommerce Currency Switcher support
+
+= 1.0.0 =
 * Initial Release.
 
 == Upgrade Notice ==
 
-= 1.0 =
-Initial Release.
+= 1.1.0 =
+add WOOCS - WooCommerce Currency Switcher support
