@@ -99,6 +99,22 @@ function zimrate_get_rate($currency = false)
 }
 
 /**
+ * Clear Cache
+ */
+function zimrate_clear_rate_cache($value)
+{
+
+    //clear transients
+    delete_transient('zimrate');
+
+    foreach (zimrate_supported_currencies() as $currency => $name) {
+        delete_transient('zimrate-' . $currency);
+    }
+
+    return $value;
+}
+
+/**
  * check if woo multi currency is active
  *
  * @since 1.0.0

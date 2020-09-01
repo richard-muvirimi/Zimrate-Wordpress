@@ -159,9 +159,11 @@ class Zimrate_Admin
     {
         register_setting('zimrate-options', 'zimrate-prefer', [
             'default' => 'mean',
+            'sanitize_callback' =>  'zimrate_clear_rate_cache'
         ]);
         register_setting('zimrate-options', 'zimrate-interval', [
             'default' => 'hourly',
+            'sanitize_callback' =>  'zimrate_clear_rate_cache'
         ]);
         register_setting('zimrate-options', 'zimrate-cushion', [
             'type' => 'integer',

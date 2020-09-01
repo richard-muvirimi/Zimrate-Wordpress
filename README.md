@@ -6,7 +6,7 @@
 - Requires at least: 4.0.0
 - Tested up to: 5.5
 - Requires PHP: 5.6
-- Stable tag: 1.0
+- Stable tag: 1.0.0
 - License: GPLv2 or later
 - License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,7 +68,7 @@ In the search field type “ZimRate”, then click “Search Plugins.” Once yo
 
 ##### What's this?
 
-A currency injector for wordpress plugins. When said plugin requests for latest currency rates using wordpress' functions, this plugin modifes the result before it is submitted to the requesting plugin.
+A currency injector for wordpress plugins. When said plugin requests for latest currency rates using wordpress' functions, this plugin modifies the result before it is submitted to the requesting plugin.
 
 ##### Where's my favourate plugin?
 
