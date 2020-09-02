@@ -445,11 +445,7 @@ class Zimrate_Plugins
                     $rate = pow(zimrate_get_rate($currency), -1);
                 } else {
                     //first change to usd
-                    $default_currency = $WOOCS->default_currency;
-                    $request_currency = $_REQUEST['currency_name'];
-
-                    $_REQUEST['currency_name'] = 'USD';
-                    $WOOCS->default_currency = $to;
+                    $defaults = $this->woocs_save_defaults($to);
 
                     $rate = pow(
                         zimrate_get_rate($currency) *
@@ -457,8 +453,7 @@ class Zimrate_Plugins
                         -1
                     );
 
-                    $WOOCS->default_currency = $default_currency;
-                    $_REQUEST['currency_name'] = $request_currency;
+                    $this->woocs_restore_defaults($defaults);
                 }
             } else {
                 if ($from == 'USD') {
@@ -466,18 +461,13 @@ class Zimrate_Plugins
                     $rate = zimrate_get_rate($currency);
                 } else {
                     //first change to usd
-                    $default_currency = $WOOCS->default_currency;
-                    $request_currency = $_REQUEST['currency_name'];
-
-                    $_REQUEST['currency_name'] = 'USD';
-                    $WOOCS->default_currency = $from;
+                    $defaults = $this->woocs_save_defaults($from);
 
                     $rate =
                         zimrate_get_rate($currency) *
                         $WOOCS->get_rate();
 
-                    $WOOCS->default_currency = $default_currency;
-                    $_REQUEST['currency_name'] = $request_currency;
+                    $this->woocs_restore_defaults($defaults);
                 }
             }
 
@@ -485,5 +475,48 @@ class Zimrate_Plugins
         }
 
         return $rate;
+    }
+
+    /**
+     * Save WOOCS values to restore later
+     *
+     * @since 1.1.0
+     * @param string $currency
+     * @return array
+     */
+    private function woocs_save_defaults($currency)
+    {
+        global $WOOCS;
+
+        $default_currency = $WOOCS->default_currency;
+        $request_currency = $_REQUEST['currency_name'];
+        $no_ajax = $_REQUEST['no_ajax'] ?: false;
+
+        $_REQUEST['currency_name'] = 'USD';
+        $WOOCS->default_currency = $currency;
+        $_REQUEST['no_ajax'] = true;
+
+        return compact('default_currency', 'request_currency', 'no_ajax');
+    }
+
+    /**
+     * Restore WOOCS defaults values
+     *
+     * @since 1.1.0
+     * @param array $defaults
+     */
+    private function woocs_restore_defaults($defaults)
+    {
+        global $WOOCS;
+
+        extract($defaults);
+
+        $WOOCS->default_currency = $default_currency;
+        $_REQUEST['currency_name'] = $request_currency;
+        if ($no_ajax) {
+            $_REQUEST['no_ajax'] = $no_ajax;
+        } else {
+            unset($_REQUEST['no_ajax']);
+        }
     }
 }
