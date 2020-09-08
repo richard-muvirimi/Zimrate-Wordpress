@@ -15,6 +15,7 @@
  *
  * This class defines all code necessary to run during the plugin's activation.
  *
+ * @version    1.1.2
  * @since      1.0.0
  * @package    Zimrate
  * @subpackage Zimrate/includes
@@ -28,8 +29,12 @@ class Zimrate_Activator
      * Long Description.
      *
      * @since    1.0.0
+     * @version  1.1.2
      */
     public static function activate()
     {
+
+        //get rates for caching on activate
+        zimrate_get_rates();
     }
 }

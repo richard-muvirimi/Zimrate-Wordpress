@@ -25,6 +25,7 @@ function zimrate_get_isos()
 /**
  * Get exchange rates
  *
+ * @version 1.1.2
  * @since 1.0.0
  * @param string $currency
  * @return array
@@ -50,6 +51,25 @@ function zimrate_get_rates($currency = false)
         if (is_wp_error($response)) {
             //get fall back rate
             $rates = get_transient($key . '-backup');
+
+            //if fail to get specific rate try to extract from whole response
+            if ($rates === false) {
+                if ($currency !== false) {
+                    $backup = get_transient("zimrate-backup");
+
+                    foreach ($backup['USD'] as $key => $rate) {
+                        if ($rate['currency'] == $currency) {
+                            $rates["USD"][] = $rate;
+                            break;
+                        }
+                    }
+                } else {
+                    $rates = array(
+                        "USD" => array(),
+                        "info" => __("Cannot load rates at this time", "zimrate")
+                    );
+                }
+            }
         } else {
             $rates = apply_filters(
                 'zimrate-rates',
@@ -73,6 +93,7 @@ function zimrate_get_rates($currency = false)
 /**
  * get exchange rate for currency
  *
+ * @version 1.1.2
  * @since 1.0.0
  * @param string $currency
  * @return float
@@ -86,7 +107,7 @@ function zimrate_get_rate($currency = false)
         return 1;
     } else {
         if (isset($rates['USD']) && !empty($rates['USD'])) {
-            return $rates['USD'][0]['rate'];
+            return array_shift($rates['USD'])['rate'];
         } else {
             //fall back to rbz else to one
             if ($currency == 'RBZ') {
@@ -99,7 +120,11 @@ function zimrate_get_rate($currency = false)
 }
 
 /**
- * Clear Cache
+ * Undocumented function
+ *
+ * @since 1.1.1
+ * @param string $value
+ * @return string
  */
 function zimrate_clear_rate_cache($value)
 {
