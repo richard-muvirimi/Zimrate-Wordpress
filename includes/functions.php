@@ -73,7 +73,7 @@ function zimrate_get_rates($currency = false)
         } else {
             $rates = apply_filters(
                 'zimrate-rates',
-                json_decode($response['body'], true)
+                json_decode(wp_remote_retrieve_body($response), true)
             );
 
             set_transient(
