@@ -83,7 +83,7 @@ function zimrate_get_rates($currency = false)
             );
 
             //if we fail to retrieve rates we will fall back to this
-            set_transient($key . '-backup', $rates, MONTH_IN_SECONDS);
+            set_transient($key . '-backup', $rates, defined("MONTH_IN_SECONDS") ?  MONTH_IN_SECONDS : DAY_IN_SECONDS * 30);
         }
     }
 
