@@ -12,7 +12,7 @@
  * Plugin Name:       ZimRate
  * Plugin URI:        http://zimrate.tyganeutronics.com
  * Description:       All Zimbabwean exchange rates from multiple sites in one plugin. No need to scrounge the internet for the current days rate.
- * Version:           1.1.2
+ * Version:           1.1.3
  * Author:            Tyganeutronics
  * Author URI:        https://tyganeutronics.com
  * License:           GPL-2.0+
@@ -36,7 +36,7 @@ if (!defined('WPINC')) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define('ZIMRATE_VERSION', '1.1.2');
+define('ZIMRATE_VERSION', '1.1.3');
 
 /**
  * The code that runs during plugin activation.
