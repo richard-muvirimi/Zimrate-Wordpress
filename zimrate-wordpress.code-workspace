@@ -1,12 +1,12 @@
 {
   "folders": [
     {
-      "path": "../../.."
-    },
-    {
       "name": "zimrate-wordpress",
       "path": "."
-    }
+    },
+    {
+      "path": "../../.."
+    },
   ],
   "settings": {}
 }

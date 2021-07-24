@@ -83,6 +83,7 @@ class Zimrate
         $this->define_admin_hooks();
         $this->define_plugins_hooks();
         $this->define_public_hooks();
+        $this->define_ajax_hooks();
     }
 
     /**
@@ -106,42 +107,42 @@ class Zimrate
         /**
          * The file housing common plugin functions
          */
-        require_once plugin_dir_path(dirname(__FILE__)) .
-            'includes/functions.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/functions.php';
 
         /**
          * The class responsible for orchestrating the actions and filters of the
          * core plugin.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) .
-            'includes/class-zimrate-loader.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-zimrate-loader.php';
 
         /**
          * The class responsible for defining internationalization functionality
          * of the plugin.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) .
-            'includes/class-zimrate-i18n.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-zimrate-i18n.php';
 
         /**
          * The class responsible for defining all actions that occur in the admin area.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) .
-            'admin/class-zimrate-admin.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-zimrate-admin.php';
 
         /**
          * The class responsible for defining all actions that occur in the plugins
          * side of the site.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) .
-            'plugins/class-zimrate-plugin.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'plugins/class-zimrate-plugin.php';
 
         /**
          * The class responsible for defining all actions that occur in the public-facing
          * side of the site.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) .
-            'public/class-zimrate-public.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-zimrate-public.php';
+
+        /**
+         * The class responsible for defining all actions that occur in the ajax-facing
+         * side of the site.
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'ajax/class-zimrate-ajax.php';
 
         $this->loader = new Zimrate_Loader();
     }
@@ -222,6 +223,26 @@ class Zimrate
             $plugin_admin,
             'add_woocommerce_currency_symbols'
         );
+
+        // request rating
+        $this->loader->add_filter('admin_notices', $plugin_admin, 'show_rating');
+    }
+
+    /**
+     * Register all of the hooks related to the public-facing functionality
+     * of the plugin.
+     *
+     * @access private
+     * @since 1.1.3
+     */
+    private function define_ajax_hooks()
+    {
+
+        $plugin_ajax = new ZimRate_Ajax($this->get_plugin_name(), $this->get_version());
+
+        $this->loader->add_action('wp_ajax_' . $this->get_plugin_name() . '-rate', $plugin_ajax, 'ajaxDoRate');
+        $this->loader->add_action('wp_ajax_' . $this->get_plugin_name() . '-remind', $plugin_ajax, 'ajaxDoRemind');
+        $this->loader->add_action('wp_ajax_' . $this->get_plugin_name() . '-cancel', $plugin_ajax, 'ajaxDoCancel');
     }
 
     /**

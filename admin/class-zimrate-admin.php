@@ -80,6 +80,8 @@ class Zimrate_Admin
                     'all'
                 );
         }
+
+        wp_register_style($this->plugin_name . "-rate", plugin_dir_url(__FILE__) . 'css/zimrate-admin-rate.css', array(), $this->version, 'all');
     }
 
     /**
@@ -100,6 +102,8 @@ class Zimrate_Admin
                 );
                 break;
         }
+
+        wp_register_script($this->plugin_name . "-rate", plugin_dir_url(__FILE__) . 'js/zimrate-admin.js', array('jquery'), $this->version, false);
     }
 
     /**
@@ -431,5 +435,31 @@ class Zimrate_Admin
         }
 
         return $currencies;
+    }
+
+
+    /**
+     * Show rating request
+     *
+     * @since 1.1.3
+     * @version 1.1.3
+     * @return void
+     */
+    public function show_rating()
+    {
+        /**
+         * Request Rating
+         */
+        if (boolval(get_transient($this->plugin_name . "-rate")) === false) {
+            wp_enqueue_script($this->plugin_name . "-rate");
+            wp_localize_script($this->plugin_name . "-rate", "zimrate", array(
+                "ajax_url" => admin_url('admin-ajax.php'),
+                "name" => $this->plugin_name
+            ));
+
+            wp_enqueue_style($this->plugin_name . "-rate");
+
+            include plugin_dir_path(__FILE__) . "partials/zimrate-admin-rating.php";
+        }
     }
 }
