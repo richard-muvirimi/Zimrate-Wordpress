@@ -36,5 +36,9 @@ class Zimrate_Activator
 
         //get rates for caching on activate
         zimrate_get_rates();
+
+        if (boolval(get_transient("zimrate-rate")) === false) {
+            set_transient("zimrate-rate", true, defined("MONTH_IN_SECONDS") ? MONTH_IN_SECONDS * 3 : YEAR_IN_SECONDS / 4);
+        }
     }
 }
