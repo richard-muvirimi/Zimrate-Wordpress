@@ -1,12 +1,12 @@
 # ZimRate
 
-- Contributors: tygalive
+- Contributors: @tygalive
 - Donate link: https://tyganeutronics.com
 - Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 - Requires at least: 4.0.0
-- Tested up to: 5.5
+- Tested up to: 5.8
 - Requires PHP: 5.6
-- Stable tag: 1.1.2
+- Stable tag: 1.1.3
 - License: GPLv2 or later
 - License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,6 +93,10 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 2. Zimrate options screen
 
 ### Changelog
+
+##### 1.1.3
+
+- Minor Bug Fixes
 
 ##### 1.1.0 - 1.1.2
 
