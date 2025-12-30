@@ -1,0 +1,57 @@
+name: Update Dependencies
+
+on:
+  # On push
+  push:
+    branches: [ develop ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+  # Run weekly
+  schedule:
+    - cron: '0 0 * * 0'
+  
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: develop
+    
+    - name: Cache Composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: /tmp/composer-cache
+        key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+      
+    - name: Setup PHP
+      uses: php-actions/composer@v6
+      with:
+        dev: yes
+        php_version: "7.4"
+        version: latest
+        command: update
+        
+    - name: Check for changes
+      id: check_changes
+      run: |
+        if [[ -n $(git status -s) ]]; then
+          echo "changes=true" >> $GITHUB_OUTPUT
+        else
+          echo "changes=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Create Pull Request
+      if: steps.check_changes.outputs.changes == 'true'
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: 'chore: update dependencies'
+        title: 'chore: Update Dependencies'
+        body: 'Automated dependency updates'
+        branch: 'dependencies/composer-update'
+        base: develop
+        delete-branch: true

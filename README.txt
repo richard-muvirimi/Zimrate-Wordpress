@@ -3,8 +3,8 @@ Contributors: tygalive
 Donate link: https://tyganeutronics.com
 Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 Requires at least: 4.0.0
-Tested up to: 5.8
-Requires PHP: 5.6
+Tested up to: 6.9
+Requires PHP: 7.3
 Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -18,12 +18,12 @@ This plugin modifies the result from listed plugins api calls before they are su
 
 This plugin directly supports these plugins:
 
-*   [Multi Currency for WooCommerce](https://wordpress.org/plugins/woo-multi-currency "Multi Currency for WooCommerce")
-*   [Multi Currency for WooCommerce](https://wordpress.org/plugins/wc-multi-currency "Multi Currency for WooCommerce")
+*   [CURCY – Multi Currency for WooCommerce](https://wordpress.org/plugins/woo-multi-currency "CURCY – Multi Currency for WooCommerce")
+*   [Multi Currency For WooCommerce](https://wordpress.org/plugins/wc-multi-currency "Multi Currency For WooCommerce")
 *   [CurrencyConverter](https://wordpress.org/plugins/currencyconverter "CurrencyConverter")
 *   [Currency Switcher for WooCommerce](https://wordpress.org/plugins/currency-switcher-woocommerce "Currency Switcher for WooCommerce")
 *   [Currency Exchange for WooCommerce](https://wordpress.org/plugins/currency-exchange-for-woocommerce "Currency Exchange for WooCommerce")
-*   [WOOCS - WooCommerce Currency Switcher](https://wordpress.org/plugins/woocommerce-currency-switcher "WOOCS - WooCommerce Currency Switcher")
+*   [FOX – Currency Switcher Professional for WooCommerce](https://wordpress.org/plugins/woocommerce-currency-switcher "FOX – Currency Switcher Professional for WooCommerce")
 
 All Zimbabwean rates are obtained from [ZimRate](http://zimrate.tyganeutronics.com "Zimrate") and caching is provided in plugin to avoid overloading the server though you are free to disable caching.
 
@@ -37,10 +37,10 @@ This plugin uses a few third party services to convert currencies originally not
 
 Listed below are supported plugins including how the api services they use are used by this plugin as well as their privacy policy and/or terms of service links:
 
-* [Multi Currency for WooCommerce](https://wordpress.org/plugins/woo-multi-currency "Multi Currency for WooCommerce")
+* [CURCY – Multi Currency for WooCommerce](https://wordpress.org/plugins/woo-multi-currency "CURCY – Multi Currency for WooCommerce")
   * [villatheme.com](https://villatheme.com/ "villatheme.com") [Privacy Policy](https://villatheme.com/privacy-policy/ "Privacy Policy")
   * When plugin requests for rates from above api, this plugin modifies the returned exchange rates to include the Zimbabwean currency and may go on to do another request to get the rate for requested currencies against the USD.
-* [Multi Currency for WooCommerce](https://wordpress.org/plugins/wc-multi-currency "Multi Currency for WooCommerce")
+* [Multi Currency For WooCommerce](https://wordpress.org/plugins/wc-multi-currency "Multi Currency For WooCommerce")
   * [alphavantage.co](https://www.alphavantage.co "alphavantage.co") [Support](https://www.alphavantage.co/support/#support "Support")
   * When plugin requests for rates from above api, this plugin modifies the returned exchange rates to include the Zimbabwean currency and may go on to do another request to get the rate for requested currencies against the USD.
 * [CurrencyConverter](https://wordpress.org/plugins/currencyconverter "CurrencyConverter")
@@ -50,7 +50,7 @@ Listed below are supported plugins including how the api services they use are u
   * Provides a filter to directly modify the returned exchange rates, though this plugin will use some of it's internal functions to get requested exchange rate in relation to USD.
 * [Currency Exchange for WooCommerce](https://wordpress.org/plugins/currency-exchange-for-woocommerce "Currency Exchange for WooCommerce")
   * Provides a filter to directly modify the returned exchange rates.
-* [WOOCS - WooCommerce Currency Switcher](https://wordpress.org/plugins/woocommerce-currency-switcher "WOOCS - WooCommerce Currency Switcher")
+* [FOX – Currency Switcher Professional for WooCommerce](https://wordpress.org/plugins/woocommerce-currency-switcher "FOX – Currency Switcher Professional for WooCommerce")
   * Provides a filter to directly modify the returned exchange rates, though this plugin will use some of it's internal functions to get requested exchange rate in relation to USD.
 
 == Installation ==
@@ -88,8 +88,8 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 
 == Screenshots ==
 
-1. Zimrate Dashboard.
-2. Zimrate options screen
+1. ZimRate Dashboard - View and manage exchange rates
+2. ZimRate Options Screen - Configure plugin settings
 
 == Changelog ==
 

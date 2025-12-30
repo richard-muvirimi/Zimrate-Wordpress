@@ -1,0 +1,15 @@
+.zimrate .center {
+    text-align: center;
+}
+
+.zimrate {
+    margin-top: 1cm;
+}
+
+.zimrate input[type='checkbox'] {
+    margin-bottom: 15px;
+}
+
+.zimrate .wrap {
+    margin-top: 2cm;
+}

@@ -1,1 +1,32 @@
 zimrate-wordpress.code-workspace
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Build files
+/build/
+/dist/
+*.phar
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.phpunit.result.cache
+/coverage/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*~

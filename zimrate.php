@@ -8,80 +8,60 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
+ * @link              https://tyganeutronics.com
+ * @since             1.0.0
+ * @package           Zimrate
+ *
  * @wordpress-plugin
  * Plugin Name:       ZimRate
- * Plugin URI:        http://zimrate.tyganeutronics.com
+ * Plugin URI:        https://github.com/richard-muvirimi/zimrate-wordpress
  * Description:       All Zimbabwean exchange rates from multiple sites in one plugin. No need to scrounge the internet for the current days rate.
  * Version:           1.1.3
- * Author:            Tyganeutronics
- * Author URI:        https://tyganeutronics.com
+ * Author:            Richard Muvirimi
+ * Author URI:        https://richard.co.zw
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       zimrate
  * Domain Path:       /languages
- * @package           Zimrate
- *
- * @link              https://tyganeutronics.com
- * @since             1.0.0
  */
+
+use RichardMuvirimi\Zimrate\Zimrate;
 
 // If this file is called directly, abort.
-
-if (!defined('WPINC')) {
-    die();
+if ( ! defined( 'WPINC' ) ) {
+    die;
 }
 
 /**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
+ * Reference to this file, and this file only, (well, plugin entry point)
  */
-define('ZIMRATE_VERSION', '1.1.3');
+const ZIMRATE_FILE = __FILE__;
+
+#region Constants 
 
 /**
- * The code that runs during plugin activation.
- * This action is documented in includes/class-zimrate-activator.php
+ * The plugin slug, one source of truth for context
  */
-function activate_zimrate()
-{
-    require_once plugin_dir_path(__FILE__) .
-        'includes/class-zimrate-activator.php';
-    Zimrate_Activator::activate();
-}
+const ZIMRATE_SLUG = 'zimrate';
 
 /**
- * The code that runs during plugin deactivation.
- * This action is documented in includes/class-zimrate-deactivator.php
+ * Plugin version number
  */
-function deactivate_zimrate()
-{
-    require_once plugin_dir_path(__FILE__) .
-        'includes/class-zimrate-deactivator.php';
-    Zimrate_Deactivator::deactivate();
-}
-
-register_activation_hook(__FILE__, 'activate_zimrate');
-register_deactivation_hook(__FILE__, 'deactivate_zimrate');
+const ZIMRATE_VERSION = '1.1.3';
 
 /**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and public-facing site hooks.
+ * Plugin name as known to WordPress
  */
-require plugin_dir_path(__FILE__) . 'includes/class-zimrate.php';
+define( 'ZIMRATE_NAME', plugin_basename( ZIMRATE_FILE ) );
+
+#endregion Constants
 
 /**
- * Begins execution of the plugin.
- *
- * Since everything within the plugin is registered via hooks,
- * then kicking off the plugin from this point in the file does
- * not affect the page life cycle.
- *
- * @since    1.0.0
+ * Load composer
  */
-function run_zimrate()
-{
-    $plugin = new Zimrate();
-    $plugin->run();
-}
+require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
-run_zimrate();
+/**
+ * And away we go
+ */
+Zimrate::instance()->run();

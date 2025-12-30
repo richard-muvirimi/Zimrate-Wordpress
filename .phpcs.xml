@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="Zimrate" namespace="RichardMuvirimi\Zimrate\">
+<description>Coding Standards for Zimrate and Php 7.3</description>
+
+<config name="testVersion" value="7.3-"/>
+
+<arg name="extensions" value="php"/>
+
+<exclude-pattern>*/vendor/*</exclude-pattern>
+<exclude-pattern>*/tests/src/*</exclude-pattern>
+<exclude-pattern>*/_old/*</exclude-pattern>
+
+ <rule ref="PHPCompatibilityWP"/>
+ <rule ref="PHPCompatibility"/>
+
+</ruleset>
