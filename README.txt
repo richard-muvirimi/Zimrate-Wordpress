@@ -5,7 +5,7 @@ Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 Requires at least: 4.0.0
 Tested up to: 6.9
 Requires PHP: 7.3
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,14 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 2. ZimRate Options Screen - Configure plugin settings
 
 == Changelog ==
+
+= 1.1.4 =
+* Updated plugin integrations with latest API support
+* Fixed ISO code checks and conversion logic
+* Improved code organization with pure inheritance architecture
+* Updated WordPress compatibility to 6.9
+* Updated tested versions for all supported plugins
+* Corrected plugin names from WordPress.org
 
 = 1.1.3 =
 * Minor Bug Fixes

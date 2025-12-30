@@ -8,7 +8,7 @@
 - **_Requires at least:_** 4.0.0
 - **_Tested up to:_** 6.9
 - **_Requires PHP:_** 7.3
-- **_Stable tag:_** 1.1.3
+- **_Stable tag:_** 1.1.4
 - **_License:_** GPLv2 or later
 - **_License URI:_** http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,6 +100,15 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 ![Zimrate Options Screen](.github/screenshots/screenshot-2.png)
 
 ### Changelog
+
+##### 1.1.4
+
+- Updated plugin integrations with latest API support
+- Fixed ISO code checks and conversion logic
+- Improved code organization with pure inheritance architecture
+- Updated WordPress compatibility to 6.9
+- Updated tested versions for all supported plugins
+- Corrected plugin names from WordPress.org
 
 ##### 1.1.3
 

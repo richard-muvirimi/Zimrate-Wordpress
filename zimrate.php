@@ -16,7 +16,7 @@
  * Plugin Name:       ZimRate
  * Plugin URI:        https://github.com/richard-muvirimi/zimrate-wordpress
  * Description:       All Zimbabwean exchange rates from multiple sites in one plugin. No need to scrounge the internet for the current days rate.
- * Version:           1.1.3
+ * Version:           1.1.4
  * Author:            Richard Muvirimi
  * Author URI:        https://richard.co.zw
  * License:           GPL-2.0+
@@ -47,7 +47,7 @@ const ZIMRATE_SLUG = 'zimrate';
 /**
  * Plugin version number
  */
-const ZIMRATE_VERSION = '1.1.3';
+const ZIMRATE_VERSION = '1.1.4';
 
 /**
  * Plugin name as known to WordPress
