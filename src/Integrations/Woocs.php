@@ -33,6 +33,17 @@ class Woocs extends BasePluginIntegration
     /**
      * {@inheritdoc}
      */
+    public function get_required_symbols(): array
+    {
+        return [
+            'woocs_add_custom_rate',
+            'WOOCS',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function get_plugin_name_fallback(): string
     {
         return 'WOOCS - WooCommerce Currency Switcher';
@@ -74,7 +85,7 @@ class Woocs extends BasePluginIntegration
     public function woocs_add_custom_rate($rate, $from, $to): mixed
     {
 
-        if (count(array_intersect([$from, $to], Functions::get_isos())) === 0) {
+        if (count(array_intersect([$from, $to], array_keys(Functions::supported_currencies()))) === 0) {
             return $rate;
         }
         

@@ -89,6 +89,25 @@ abstract class BasePluginIntegration
     abstract protected function get_plugin_name_fallback(): string;
 
     /**
+     * Symbols this integration needs the host plugin to still provide.
+     *
+     * Hook names, classes and api hostnames the integration binds to.  If the
+     * host plugin renames or drops one the integration goes silently dead, so
+     * they are declared here and checked against the published source.
+     *
+     * Each entry is matched as a literal substring, so a hook the host builds
+     * by concatenation has to be declared as the stem that appears in its
+     * source rather than the whole runtime name.
+     *
+     * @since 1.1.6
+     * @return array
+     */
+    public function get_required_symbols(): array
+    {
+        return [];
+    }
+
+    /**
      * Get the tested version of the plugin
      *
      * @return string
@@ -176,6 +195,10 @@ abstract class BasePluginIntegration
      * Child classes only need to implement get_usd_rate() and optionally
      * save_conversion_state() and restore_conversion_state() for state management.
      *
+     * The pivot is USD because that is what the host plugins quote against, so
+     * it stays USD regardless of the base the site selected for its own
+     * display.
+     *
      * @since 1.0.0
      * @param string $from Source currency code
      * @param string $to Target currency code
@@ -187,26 +210,26 @@ abstract class BasePluginIntegration
      */
     protected function convert_currency(string $from, string $to, ...$args): float
     {
-        $currency = get_option('zimrate-currencies', 'RBZ');
         $rate = 1.0;
 
-        if (in_array($from, Functions::get_isos())) {
+        if (in_array($from, array_keys(Functions::supported_currencies()))) {
             if ($to == 'USD') {
-                $rate = pow(Functions::get_rate($currency), -1);
+                $rate = pow(Functions::get_rate_from_usd($from), -1);
             } else {
                 $state = $this->save_conversion_state($to, $args);
                 $rate = pow(
-                    Functions::get_rate($currency) * $this->get_usd_rate($to, ...$args),
+                    Functions::get_rate_from_usd($from) * $this->get_usd_rate($to, ...$args),
                     -1
                 );
                 $this->restore_conversion_state($state);
             }
         } else {
             if ($from == 'USD') {
-                $rate = Functions::get_rate($currency);
+                $rate = Functions::get_rate_from_usd($to);
             } else {
                 $state = $this->save_conversion_state($from, $args);
-                $rate = Functions::get_rate($currency) * $this->get_usd_rate($from, ...$args);
+                $rate = Functions::get_rate_from_usd($to)
+                    * $this->get_usd_rate($from, ...$args);
                 $this->restore_conversion_state($state);
             }
         }

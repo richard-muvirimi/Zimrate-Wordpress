@@ -41,16 +41,22 @@ use RichardMuvirimi\Zimrate\Helpers\Functions;
         <ul class="zimrate-shortcode-list">
             <li>
                 <code>currency</code>
-                <?php _e(
-                    'Can only be either one of "ZAR", "BOND", "OMIR", "RBZ", "RTGS" defaulting to RBZ',
-                    Functions::get_plugin_slug()
+                <?php printf(
+                    /* translators: 1: available currency codes 2: selected currency code */
+                    __(
+                        'Any of %1$s, defaulting to %2$s',
+                        Functions::get_plugin_slug()
+                    ),
+                    '"' . implode('", "', array_keys(Functions::supported_currencies())) . '"',
+                    Functions::default_currency()
                 ); ?>
             </li>
             <li>
                 <code>value</code>
-                <?php _e(
-                    'The value in USD defaulting to 1',
-                    Functions::get_plugin_slug()
+                <?php printf(
+                    /* translators: %s: base currency code */
+                    __('The value in %s defaulting to 1', Functions::get_plugin_slug()),
+                    Functions::default_base()
                 ); ?>
             </li>
             <li>
@@ -78,6 +84,8 @@ use RichardMuvirimi\Zimrate\Helpers\Functions;
         <h4>
             <?php _e('Shortcode Samples', Functions::get_plugin_slug()); ?>
         </h4>
+
+        <?php $sample = Functions::default_currency(); ?>
         <ul class="zimrate-shortcode-list">
             <li>
                 <code>
@@ -90,12 +98,14 @@ use RichardMuvirimi\Zimrate\Helpers\Functions;
             </li>
             <li>
                 <code>
-                    [<?php echo Functions::get_shortcode(); ?> currency="RBZ" cushion="no"]
+                    [<?php echo Functions::get_shortcode(); ?> currency="<?php echo esc_html($sample); ?>" cushion="no"]
                 </code>
                 <strong>
                     &longrightarrow;
                 </strong>
-                <?php echo do_shortcode('[' . Functions::get_shortcode() . ' currency="RBZ" cushion="no"]') ?>
+                <?php echo do_shortcode(
+                    '[' . Functions::get_shortcode() . ' currency="' . $sample . '" cushion="no"]'
+                ) ?>
             </li>
         </ul>
     </div>
