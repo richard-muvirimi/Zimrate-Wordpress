@@ -16,7 +16,7 @@
 use RichardMuvirimi\Zimrate\Helpers\Functions;
 
 $rates = Functions::get_rates();
-$base = Functions::get_base(); ?>
+$base = Functions::default_base(); ?>
 
 <h2>
     <?php _e('Rates', Functions::get_plugin_slug()); ?>
@@ -66,14 +66,7 @@ $base = Functions::get_base(); ?>
                                 <?php esc_attr_e($index + 1); ?>
                             </td>
                             <td>
-                                <?php esc_html_e(
-                                    trim(
-                                        ($rate['name'] ?? '') .
-                                            ' (' .
-                                            $rate['currency'] .
-                                            ')'
-                                    )
-                                ); ?>
+                                <?php esc_html_e($rate['currency']); ?>
                             </td>
                             <td>
                                 <?php esc_html_e($rate['rate']); ?>

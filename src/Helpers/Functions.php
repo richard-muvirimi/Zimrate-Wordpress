@@ -60,52 +60,6 @@ class Functions
     }
 
     /**
-     * Get the iso code rates are converted to.
-     *
-     * This is whichever currency the site selected, the api quotes real iso
-     * codes so there is nothing to map it through.
-     *
-     * @version 1.1.6
-     * @since 1.0.0
-     * @return string
-     */
-    public static function get_iso(): string
-    {
-        return apply_filters('zimrate-iso', self::get_selected_currency());
-    }
-
-    /**
-     * Retired iso codes that should still be recognised as a live currency.
-     *
-     * Only currencies that actually went through a redenomination need an
-     * entry, everything else resolves to just its own code.
-     *
-     * @since 1.1.6
-     * @return array
-     */
-    public static function currency_aliases(): array
-    {
-        return apply_filters('zimrate-currency-aliases', [
-            'ZWG' => ['ZWL', 'ZWE', 'ZWD'],
-        ]);
-    }
-
-    /**
-     * Get the iso codes that count as the selected currency
-     *
-     * @version 1.1.6
-     * @since 1.0.0
-     * @return array
-     */
-    public static function get_isos(): array
-    {
-        $iso = self::get_iso();
-        $aliases = self::currency_aliases();
-
-        return apply_filters('zimrate-isos', array_merge([$iso], $aliases[$iso] ?? []));
-    }
-
-    /**
      * Get the Zimrate GraphQL endpoint
      *
      * @since 1.1.6
@@ -136,6 +90,20 @@ class Functions
     public static function default_base(): string
     {
         return apply_filters('zimrate-default-base', 'USD');
+    }
+
+    /**
+     * How to combine the sources behind a rate when none is selected.
+     *
+     * The median ignores the outliers a handful of scraped sources can throw,
+     * which the mean would carry straight into a price.
+     *
+     * @since 1.1.6
+     * @return string
+     */
+    public static function default_prefer(): string
+    {
+        return apply_filters('zimrate-default-prefer', 'MEDIAN');
     }
 
     /**
@@ -221,57 +189,6 @@ class Functions
     }
 
     /**
-     * Fetch the rate sources available for a base and currency.
-     *
-     * These are the names the api labels each series with, and are what the
-     * retired BOND, OMIR, RBZ and RTGS options really selected.  Derived from
-     * the data rather than an enum, so it is cached for an hour.
-     *
-     * @since 1.1.6
-     * @return array
-     */
-    public static function fetch_available_sources(): array
-    {
-        $base = self::get_base();
-        $currency = self::get_selected_currency();
-
-        $key = 'zimrate-sources-' . strtolower($base . '-' . $currency);
-
-        $cached = get_transient($key);
-
-        if ($cached !== false) {
-            return $cached;
-        }
-
-        $data = self::graphql(
-            'query Sources($base: Base, $currency: Currency) {' .
-                ' rate(base: $base, currency: $currency) { name }' .
-                ' }',
-            [
-                'base' => $base,
-                'currency' => $currency,
-            ]
-        );
-
-        if ($data === false || !isset($data['rate'])) {
-            return [];
-        }
-
-        $sources = [];
-        foreach ($data['rate'] as $rate) {
-            if (!empty($rate['name'])) {
-                $sources[$rate['name']] = $rate['name'];
-            }
-        }
-
-        if (!empty($sources)) {
-            set_transient($key, $sources, HOUR_IN_SECONDS);
-        }
-
-        return $sources;
-    }
-
-    /**
      * Check a cached payload still holds rates.
      *
      * Releases before 1.1.6 cached api error bodies as though they were rates,
@@ -290,8 +207,7 @@ class Functions
     /**
      * Build the transient key for a rate lookup.
      *
-     * Rates vary by base, currency and source, so all three have to be part of
-     * the key.  The live key also carries a cache version that is bumped when
+     * Rates vary by base and currency, so both have to be part of the key.  The live key also carries a cache version that is bumped when
      * settings change, which invalidates every combination at once without
      * having to enumerate them.  Backups deliberately leave the version out so
      * they survive a settings save.
@@ -299,15 +215,13 @@ class Functions
      * @since 1.1.6
      * @param string $base
      * @param string|false $currency
-     * @param string $source
      * @param bool $backup
      * @return string
      */
-    private static function cache_key(string $base, $currency, string $source, bool $backup = false): string
+    private static function cache_key(string $base, $currency, bool $backup = false): string
     {
         $key = 'zimrate-' . strtolower($base)
-            . ($currency ? '-' . strtolower($currency) : '')
-            . ($source ? '-' . substr(md5($source), 0, 8) : '');
+            . ($currency ? '-' . strtolower($currency) : '');
 
         return $backup ? $key . '-backup' : $key . '-v' . self::cache_version();
     }
@@ -329,14 +243,14 @@ class Functions
      * @version 1.1.6
      * @since 1.0.0
      * @param string|false $currency
+     * @param string|null $base Quote against this base instead of the setting
      * @return array
      */
-    public static function get_rates($currency = false): array
+    public static function get_rates($currency = false, $base = null): array
     {
-        $base = self::get_base();
-        $source = self::get_selected_source();
+        $base = $base ?: self::default_base();
 
-        $key = self::cache_key($base, $currency, $source);
+        $key = self::cache_key($base, $currency);
 
         $rates = get_transient($key);
 
@@ -344,15 +258,7 @@ class Functions
             return $rates;
         }
 
-        $data = self::query_rates($base, $currency, $source);
-
-        // a source that no longer exists filters every row out, so drop it and
-        // take the unfiltered rates rather than showing nothing
-        if ($source && is_array($data) && empty($data['rate'])) {
-            $source = '';
-            $key = self::cache_key($base, $currency, $source);
-            $data = self::query_rates($base, $currency, $source);
-        }
+        $data = self::query_rates($base, $currency);
 
         if ($data !== false) {
             $rates = apply_filters('zimrate-rates', array(
@@ -367,7 +273,7 @@ class Functions
             );
 
             set_transient(
-                self::cache_key($base, $currency, $source, true),
+                self::cache_key($base, $currency, true),
                 $rates,
                 defined("MONTH_IN_SECONDS") ?  MONTH_IN_SECONDS : DAY_IN_SECONDS * 30
             );
@@ -376,14 +282,14 @@ class Functions
         }
 
         // the request failed, fall back on the last response we know was good
-        $backup = get_transient(self::cache_key($base, $currency, $source, true));
+        $backup = get_transient(self::cache_key($base, $currency, true));
 
         if (self::is_rates($backup, $base)) {
             return $backup;
         }
 
         if ($currency !== false) {
-            $backup = get_transient(self::cache_key($base, false, $source, true));
+            $backup = get_transient(self::cache_key($base, false, true));
 
             if (self::is_rates($backup, $base)) {
                 foreach ($backup[$base] as $rate) {
@@ -409,25 +315,20 @@ class Functions
      * @since 1.1.6
      * @param string $base
      * @param string|false $currency
-     * @param string $source
      * @return array|false
      */
-    private static function query_rates(string $base, $currency, string $source)
+    private static function query_rates(string $base, $currency)
     {
-        // prefer aggregates across sources, so it only applies when no single
-        // source was asked for.  The api returns nothing at all if both are
-        // sent together.
         return self::graphql(
-            'query Rates($base: Base, $currency: Currency, $prefer: Prefer, $search: String) {' .
-                ' rate(base: $base, currency: $currency, prefer: $prefer, search: $search)' .
-                ' { currency name rate last_checked last_updated }' .
+            'query Rates($base: Base, $currency: Currency, $prefer: Prefer) {' .
+                ' rate(base: $base, currency: $currency, prefer: $prefer)' .
+                ' { currency rate last_checked last_updated }' .
                 ' info' .
                 ' }',
             [
                 'base' => $base,
                 'currency' => $currency,
-                'prefer' => $source ? '' : strtoupper(get_option('zimrate-prefer', 'mean')),
-                'search' => $source,
+                'prefer' => strtoupper(get_option('zimrate-prefer', self::default_prefer())),
             ]
         );
     }
@@ -438,15 +339,16 @@ class Functions
      * @version 1.1.6
      * @since 1.0.0
      * @param string|false $currency
+     * @param string|null $base Quote against this base instead of the setting
      * @return float
      */
-    public static function get_rate($currency = false): float
+    public static function get_rate($currency = false, $base = null): float
     {
-        $base = self::get_base();
+        $base = $base ?: self::default_base();
 
-        $currency = $currency ?: self::get_selected_currency();
+        $currency = $currency ?: self::default_currency();
 
-        $rates = self::get_rates($currency);
+        $rates = self::get_rates($currency, $base);
 
         if (isset($rates[$base]) && !empty($rates[$base])) {
             return floatval(array_shift($rates[$base])['rate']);
@@ -458,7 +360,47 @@ class Functions
             return 1.0;
         }
 
-        return self::get_rate($fallback);
+        return self::get_rate($fallback, $base);
+    }
+
+    /**
+     * Every ground rate the api provides, keyed by currency, quoted against USD.
+     *
+     * The plugins we integrate with keep USD based rate tables filled from
+     * exchange feeds.  Those feeds do not see the rates actually being used on
+     * the ground, which is the whole reason this plugin exists, so every
+     * currency the api covers gets overridden rather than a chosen one.
+     *
+     * @since 1.1.6
+     * @return array
+     */
+    public static function get_rates_from_usd(): array
+    {
+        $rates = self::get_rates(false, 'USD');
+
+        $map = array();
+        foreach ($rates['USD'] ?? array() as $rate) {
+            $map[$rate['currency']] = self::apply_cushion(floatval($rate['rate']));
+        }
+
+        return apply_filters('zimrate-usd-rates', $map);
+    }
+
+    /**
+     * Get the rate a USD based plugin expects.
+     *
+     * The plugins we integrate with keep rate tables quoted against USD, so an
+     * integration needs the USD rate no matter which base the site picked for
+     * its own display.  Feeding them the site's base would silently misprice
+     * every product by the USD to base ratio.
+     *
+     * @since 1.1.6
+     * @param string|false $currency
+     * @return float
+     */
+    public static function get_rate_from_usd($currency = false): float
+    {
+        return self::get_rate($currency, 'USD');
     }
 
     /**
@@ -564,17 +506,6 @@ class Functions
     }
 
     /**
-     * Get the rate sources available for the selected base and currency
-     *
-     * @since 1.1.6
-     * @return array
-     */
-    public static function supported_sources(): array
-    {
-        return apply_filters('zimrate-sources', self::fetch_available_sources());
-    }
-
-    /**
      * Get zimrate intervals array
      *
      * @since 1.0.0
@@ -624,39 +555,6 @@ class Functions
         }
 
         return $params;
-    }
-
-    /**
-     * Get selected currency
-     *
-     * @since 1.0.0
-     * @return string
-     */
-    public static function get_selected_currency(): string
-    {
-        return get_option('zimrate-currencies', self::default_currency());
-    }
-
-    /**
-     * Get the base currency rates are quoted against
-     *
-     * @since 1.1.6
-     * @return string
-     */
-    public static function get_base(): string
-    {
-        return get_option('zimrate-base', self::default_base());
-    }
-
-    /**
-     * Get the selected rate source, empty when any source will do
-     *
-     * @since 1.1.6
-     * @return string
-     */
-    public static function get_selected_source(): string
-    {
-        return strval(get_option('zimrate-source', ''));
     }
 
     /**

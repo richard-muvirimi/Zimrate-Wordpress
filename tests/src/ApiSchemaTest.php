@@ -49,7 +49,7 @@ class ApiSchemaTest extends TestCase
         $fields = array_column($schema['rate']['fields'], 'name');
 
         // read by Functions::get_rates() and the admin rates table
-        foreach (['currency', 'name', 'rate', 'last_checked', 'last_updated'] as $field) {
+        foreach (['currency', 'rate', 'last_checked', 'last_updated'] as $field) {
             self::assertContains(
                 $field,
                 $fields,
@@ -109,11 +109,6 @@ class ApiSchemaTest extends TestCase
             'Base',
             $types['base'] ?? '',
             'rate(base:) no longer takes a Base, Functions::get_rates() binds it as one'
-        );
-        self::assertSame(
-            'String',
-            $types['search'] ?? '',
-            'rate(search:) no longer takes a String, the rate source setting binds it as one'
         );
     }
 
@@ -177,8 +172,14 @@ class ApiSchemaTest extends TestCase
             'The Prefer enum is empty, Functions::supported_prefers() builds the settings dropdown from it'
         );
 
+        self::assertContains(
+            Functions::default_prefer(),
+            $prefers,
+            'Functions::default_prefer() is no longer a value the api accepts'
+        );
+
         // whatever a site already stored has to keep resolving once uppercased
-        foreach (['max', 'mean', 'min'] as $stored) {
+        foreach (['max', 'mean', 'median', 'min'] as $stored) {
             self::assertContains(
                 strtoupper($stored),
                 $prefers,
