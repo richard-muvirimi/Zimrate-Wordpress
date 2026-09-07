@@ -142,7 +142,7 @@ class Admin extends BaseController
             'sanitize_callback' => array(Functions::class, 'clear_rate_cache')
         ));
         register_setting('zimrate-options', 'zimrate-interval', array(
-            'default' => 'hourly',
+            'default' => MINUTE_IN_SECONDS,
             'sanitize_callback' => array(Functions::class, 'clear_rate_cache')
         ));
         register_setting('zimrate-options', 'zimrate-cushion', array(
@@ -150,7 +150,16 @@ class Admin extends BaseController
             'default' => 1,
         ));
         register_setting('zimrate-options', 'zimrate-currencies', array(
-            'default' => 'RBZ',
+            'default' => Functions::default_currency(),
+            'sanitize_callback' => array(Functions::class, 'clear_rate_cache')
+        ));
+        register_setting('zimrate-options', 'zimrate-base', array(
+            'default' => Functions::default_base(),
+            'sanitize_callback' => array(Functions::class, 'clear_rate_cache')
+        ));
+        register_setting('zimrate-options', 'zimrate-source', array(
+            'default' => '',
+            'sanitize_callback' => array(Functions::class, 'clear_rate_cache')
         ));
     }
 
@@ -194,16 +203,10 @@ class Admin extends BaseController
                     'style' => 'width: 100%;'
                 );
 
-                $options = array(
-                    'max' => 'Maximum',
-                    'mean' => 'Average',
-                    'min' => 'Minimum',
-                );
-
                 $this->print_html_select(
                     $attr,
-                    $options,
-                    get_option('zimrate-prefer', 'mean'),
+                    Functions::supported_prefers(),
+                    strtoupper(get_option('zimrate-prefer', 'mean')),
                     __('The exchange rate value to use.', Functions::get_plugin_slug())
                 );
             },
@@ -262,8 +265,31 @@ class Admin extends BaseController
         );
 
         add_settings_field(
+            'zimrate-base',
+            __('Base Currency', Functions::get_plugin_slug()),
+            function () {
+                $attr = array(
+                    'name' => 'zimrate-base',
+                    'id' => 'zimrate-base',
+                    'required' => 'true',
+                    'style' => 'width: 100%;'
+                );
+
+                $this->print_html_select(
+                    $attr,
+                    Functions::supported_bases(),
+                    Functions::get_base(),
+                    __('The currency rates are quoted against.', Functions::get_plugin_slug())
+                );
+            },
+            'zimrate-options',
+            'zimrate-options-section',
+            array('label_for' => 'zimrate-base')
+        );
+
+        add_settings_field(
             'zimrate-currencies',
-            __('Preferred Rate', Functions::get_plugin_slug()),
+            __('Currency', Functions::get_plugin_slug()),
             function () {
                 $attr = array(
                     'name' => 'zimrate-currencies',
@@ -276,12 +302,40 @@ class Admin extends BaseController
                     $attr,
                     Functions::supported_currencies(),
                     Functions::get_selected_currency(),
-                    __('The preferred exchange rate', Functions::get_plugin_slug())
+                    __('The currency to convert to.', Functions::get_plugin_slug())
                 );
             },
             'zimrate-options',
             'zimrate-options-section',
             array('label_for' => 'zimrate-currencies')
+        );
+
+        add_settings_field(
+            'zimrate-source',
+            __('Rate Source', Functions::get_plugin_slug()),
+            function () {
+                $attr = array(
+                    'name' => 'zimrate-source',
+                    'id' => 'zimrate-source',
+                    'style' => 'width: 100%;'
+                );
+
+                $sources = array('' => __('Any source', Functions::get_plugin_slug()))
+                    + Functions::supported_sources();
+
+                $this->print_html_select(
+                    $attr,
+                    $sources,
+                    Functions::get_selected_source(),
+                    __(
+                        'The rate source to use, leave on any to combine them all.',
+                        Functions::get_plugin_slug()
+                    )
+                );
+            },
+            'zimrate-options',
+            'zimrate-options-section',
+            array('label_for' => 'zimrate-source')
         );
     }
 

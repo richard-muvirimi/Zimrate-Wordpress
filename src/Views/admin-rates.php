@@ -15,7 +15,8 @@
 
 use RichardMuvirimi\Zimrate\Helpers\Functions;
 
-$rates = Functions::get_rates(); ?>
+$rates = Functions::get_rates();
+$base = Functions::get_base(); ?>
 
 <h2>
     <?php _e('Rates', Functions::get_plugin_slug()); ?>
@@ -42,7 +43,10 @@ $rates = Functions::get_rates(); ?>
                         <?php _e('Currency', Functions::get_plugin_slug()); ?>
                     </th>
                     <th>
-                        <?php _e('Rate', Functions::get_plugin_slug()); ?>
+                        <?php printf(
+                            __('Rate (per 1 %s)', Functions::get_plugin_slug()),
+                            esc_html($base)
+                        ); ?>
                     </th>
                     <th>
                         <?php _e('Last Updated', Functions::get_plugin_slug()); ?>
@@ -55,7 +59,7 @@ $rates = Functions::get_rates(); ?>
 
                 $supported = array_keys(Functions::supported_currencies());
 
-                foreach ($rates['USD'] as $index => $rate) :
+                foreach ($rates[$base] as $index => $rate) :
                     if (in_array($rate['currency'], $supported)) : ?>
                         <tr>
                             <td>
@@ -63,10 +67,12 @@ $rates = Functions::get_rates(); ?>
                             </td>
                             <td>
                                 <?php esc_html_e(
-                                    Functions::supported_currencies()[$rate['currency']] .
-                                        ' (' .
-                                        $rate['currency'] .
-                                        ')'
+                                    trim(
+                                        ($rate['name'] ?? '') .
+                                            ' (' .
+                                            $rate['currency'] .
+                                            ')'
+                                    )
                                 ); ?>
                             </td>
                             <td>
@@ -91,8 +97,8 @@ $rates = Functions::get_rates(); ?>
                 <tr>
                     <td colspan="4">
                         <?php
-                        $last_checked = empty($rates['USD']) ? time() : max(
-                            array_column($rates['USD'], 'last_checked')
+                        $last_checked = empty($rates[$base]) ? time() : max(
+                            array_column($rates[$base], 'last_checked')
                         );
                         printf(
                             __('Last Checked %s', Functions::get_plugin_slug()),

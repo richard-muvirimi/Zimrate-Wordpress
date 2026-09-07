@@ -187,7 +187,7 @@ abstract class BasePluginIntegration
      */
     protected function convert_currency(string $from, string $to, ...$args): float
     {
-        $currency = get_option('zimrate-currencies', 'RBZ');
+        $currency = Functions::get_selected_currency();
         $rate = 1.0;
 
         if (in_array($from, Functions::get_isos())) {
