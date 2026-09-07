@@ -33,6 +33,16 @@ class CurrencyConverter extends BasePluginIntegration
     /**
      * {@inheritdoc}
      */
+    public function get_required_symbols(): array
+    {
+        return [
+            'api.exchangerate.guru',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function get_plugin_name_fallback(): string
     {
         return 'CurrencyConverter';
@@ -78,8 +88,10 @@ class CurrencyConverter extends BasePluginIntegration
         if ($host === 'api.exchangerate.guru') {
             $rates = json_decode(wp_remote_retrieve_body($response), true);
 
-            $rates = array_map(function($data) {
-                $data['rates'][Functions::get_iso()] = Functions::apply_cushion(Functions::get_rate());
+            $ground = Functions::get_rates_from_usd();
+
+            $rates = array_map(function ($data) use ($ground) {
+                $data['rates'] = array_merge($data['rates'], $ground);
                 return $data;
             }, $rates);
 

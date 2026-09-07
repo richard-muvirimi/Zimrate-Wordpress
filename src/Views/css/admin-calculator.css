@@ -1,0 +1,96 @@
+/**
+ * Zimrate calculator styles
+ *
+ * Deliberately light touch, the calculator inherits the surrounding typography
+ * and colours rather than imposing its own palette.
+ *
+ * @since 1.1.6
+ */
+
+.zimrate-calculator {
+    display: block;
+    max-width: 40rem;
+}
+
+.zimrate-calculator-fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: .75rem;
+}
+
+.zimrate-calculator-field {
+    display: flex;
+    flex: 1 1 12rem;
+    flex-direction: column;
+    gap: .25rem;
+    min-width: 0;
+}
+
+.zimrate-calculator-field > span {
+    font-size: .85em;
+    opacity: .8;
+}
+
+.zimrate-calculator-field input,
+.zimrate-calculator-field select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.zimrate-calculator-swap {
+    flex: 0 0 auto;
+    padding: .35rem .6rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.zimrate-calculator-summary {
+    margin: .75rem 0 0;
+    font-size: .9em;
+    opacity: .8;
+}
+
+.zimrate-calculator-summary:empty {
+    display: none;
+}
+
+.zimrate-calculator-table {
+    margin-top: 1rem;
+}
+
+.zimrate-calculator-table > summary {
+    cursor: pointer;
+}
+
+.zimrate-calculator-scroll {
+    margin-top: .5rem;
+    overflow-x: auto;
+}
+
+.zimrate-calculator-scroll table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.zimrate-calculator-scroll th,
+.zimrate-calculator-scroll td {
+    padding: .35rem .5rem;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.zimrate-calculator-scroll tbody tr {
+    cursor: pointer;
+}
+
+.zimrate-calculator-info {
+    margin: .5rem 0 0;
+    font-size: .85em;
+    opacity: .7;
+}
+
+.zimrate-calculator-empty {
+    margin: 0;
+    opacity: .8;
+}

@@ -33,6 +33,18 @@ class CurrencyExchangeWoocommerce extends BasePluginIntegration
     /**
      * {@inheritdoc}
      */
+    public function get_required_symbols(): array
+    {
+        // the host builds these as 'berocket_ce_apis_sanitize_' . $api_slug,
+        // so only the stem is ever a literal in its source
+        return [
+            'berocket_ce_apis_sanitize_',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function get_plugin_name_fallback(): string
     {
         return 'Currency Exchange for WooCommerce';
@@ -74,8 +86,6 @@ class CurrencyExchangeWoocommerce extends BasePluginIntegration
      */
     public function currency_exchange_for_woocommerce($rates): array
     {
-        $rates[Functions::get_iso()] = Functions::apply_cushion(Functions::get_rate());
-
-        return $rates;
+        return array_merge($rates, Functions::get_rates_from_usd());
     }
 }
