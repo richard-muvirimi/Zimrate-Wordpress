@@ -33,6 +33,16 @@ class CurrencySwitcherWoocommerce extends BasePluginIntegration
     /**
      * {@inheritdoc}
      */
+    public function get_required_symbols(): array
+    {
+        return [
+            'alg_wc_cs_get_exchange_rate',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function get_plugin_name_fallback(): string
     {
         return 'Currency Switcher for WooCommerce';
@@ -74,7 +84,7 @@ class CurrencySwitcherWoocommerce extends BasePluginIntegration
      */
     public function currency_switcher_woocommerce($rate, $server, $from, $to): float
     {
-        if (count(array_intersect([$from, $to], Functions::get_isos())) === 0) {
+        if (count(array_intersect([$from, $to], array_keys(Functions::supported_currencies()))) === 0) {
             return $rate;
         }
         

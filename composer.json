@@ -1,6 +1,6 @@
 {
     "name": "richardmuvirimi/zimrate",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "description": "All Zimbabwean exchange rates from multiple sites in one plugin. No need to scrounge the internet for the current days rate.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0+",
@@ -100,6 +100,7 @@
         "yidas/client-ip": "^1.0"
     },
     "require-dev": {
+        "ext-zip": "*",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
         "brain/monkey": "^2.6",
         "phpunit/phpunit": "^8.5",
