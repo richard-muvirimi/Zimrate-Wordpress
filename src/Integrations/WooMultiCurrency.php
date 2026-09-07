@@ -34,6 +34,19 @@ class WooMultiCurrency extends BasePluginIntegration
     /**
      * {@inheritdoc}
      */
+    public function get_required_symbols(): array
+    {
+        return [
+            'wmc_get_exchange',
+            'wmc_get_currency_code',
+            'WOOMULTI_CURRENCY_F_Data',
+            'api.villatheme.com',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function get_plugin_name_fallback(): string
     {
         return 'Multi Currency for WooCommerce';
@@ -81,7 +94,10 @@ class WooMultiCurrency extends BasePluginIntegration
         if ($host === 'api.villatheme.com') {
             $params = $parsed_args['body'];
 
-            if (count(array_intersect([$params['from'], $params['to']], Functions::get_isos())) > 0) {
+            if (count(array_intersect(
+                [$params['from'], $params['to']],
+                array_keys(Functions::supported_currencies())
+            )) > 0) {
                 $response['body'] = json_encode([
                     $params['to'] => $this->convert_currency(
                         $params['from'],
@@ -126,7 +142,7 @@ class WooMultiCurrency extends BasePluginIntegration
     public function get_currency_code($currency_code, $mappings, $country_code): string
     {
         if ($country_code === 'ZW') {
-            return Functions::get_iso();
+            return Functions::default_currency();
         }
         
         return $currency_code;
@@ -189,10 +205,6 @@ if (class_exists('WOOMULTI_CURRENCY_F_Data')) {
          */
         public function get_country_data($currency_code)
         {
-            if (in_array($currency_code, Functions::get_isos())) {
-                $currency_code = Functions::get_iso();
-            }
-
             return parent::get_country_data($currency_code);
         }
 
@@ -207,7 +219,8 @@ if (class_exists('WOOMULTI_CURRENCY_F_Data')) {
          */
         public function get_country_freebase($country_code)
         {
-            if (in_array($country_code, Functions::get_isos())) {
+            // /m/02c1rx is Zimbabwe, the parent has no mapping for it
+            if ($country_code === 'ZW') {
                 $data = '/m/02c1rx';
             } else {
                 $data = parent::get_country_freebase($country_code);

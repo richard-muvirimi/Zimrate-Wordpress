@@ -171,6 +171,7 @@ class Zimrate
         $this->add_action('admin_init', $controller, 'add_settings_fields');
         $this->add_action('admin_init', $controller, 'registerOptions');
         $this->add_action('admin_notices', $controller, 'showAdminNotices');
+        $this->add_action('wp_dashboard_setup', $controller, 'on_dashboard_setup');
         $this->add_filter('woocommerce_currencies', $controller, 'add_woocommerce_currencies');
         $this->add_filter('woocommerce_currency_symbols', $controller, 'add_woocommerce_currency_symbols');
         $this->add_action('admin_enqueue_scripts', $controller, 'enqueue_styles');
@@ -191,9 +192,7 @@ class Zimrate
 
         $controller = new Site();
 
-        $this->add_shortcode('zimrate', $controller, 'currency_shortcode');
-        $this->add_action('wp_enqueue_scripts', $controller, 'enqueue_styles');
-        $this->add_action('wp_enqueue_scripts', $controller, 'enqueue_scripts');
+        $this->add_shortcode(Functions::get_shortcode(), $controller, 'currency_shortcode');
     }
 
     /**

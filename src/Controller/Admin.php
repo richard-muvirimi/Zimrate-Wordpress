@@ -45,6 +45,16 @@ class Admin extends BaseController
             wp_enqueue_style('plugin-install');
         }
 
+        // The calculator only renders in the dashboard widget
+        if ($screen && $screen->id === 'dashboard') {
+            wp_enqueue_style(
+                Functions::get_plugin_slug() . '-calculator',
+                Template::get_style_url('admin-calculator.css'),
+                array(),
+                Functions::get_plugin_version()
+            );
+        }
+
         // Register rating and about styles (enqueued conditionally by showAdminNotices/renderAboutPage)
         wp_register_style(Functions::get_plugin_slug() . "-rate", Template::get_style_url('admin-rating.css'), array(), Functions::get_plugin_version());
         wp_register_style(Functions::get_plugin_slug() . "-about", Template::get_style_url('admin-about.css'), array(), Functions::get_plugin_version());
@@ -63,6 +73,16 @@ class Admin extends BaseController
         if ($screen && $screen->id === 'toplevel_page_zimrate-dashboard') {
             wp_enqueue_script('plugin-install');
             add_thickbox();
+        }
+
+        if ($screen && $screen->id === 'dashboard') {
+            wp_enqueue_script(
+                Functions::get_plugin_slug() . '-calculator',
+                Template::get_script_url('admin-calculator.js'),
+                array(),
+                Functions::get_plugin_version(),
+                true
+            );
         }
 
         // Register rating script and localize it (enqueued conditionally by showAdminNotices)
@@ -121,6 +141,46 @@ class Admin extends BaseController
     }
 
     /**
+     * Register the dashboard widget
+     *
+     * @since 1.1.6
+     * @return void
+     */
+    public function on_dashboard_setup(): void
+    {
+        wp_add_dashboard_widget(
+            Functions::get_plugin_slug('-calculator'),
+            __('ZimRate Calculator', Functions::get_plugin_slug()),
+            array($this, 'render_dashboard_widget')
+        );
+    }
+
+    /**
+     * Render the dashboard widget
+     *
+     * @since 1.1.6
+     * @return void
+     */
+    public function render_dashboard_widget(): void
+    {
+        echo Template::get_template(
+            Functions::get_plugin_slug('-calculator'),
+            array(
+                'args' => array(
+                    'base' => Functions::default_base(),
+                    'currency' => Functions::default_currency(),
+                    'amount' => 1,
+                    'precision' => 2,
+                    'cushion' => 'yes',
+                    'table' => 'yes',
+                    'open' => 'no',
+                ),
+            ),
+            'calculator.php'
+        );
+    }
+
+    /**
      * Render the options page
      *
      * @since 1.0.0
@@ -138,19 +198,16 @@ class Admin extends BaseController
     public function register_setting(): void
     {
         register_setting('zimrate-options', 'zimrate-prefer', array(
-            'default' => 'mean',
+            'default' => Functions::default_prefer(),
             'sanitize_callback' => array(Functions::class, 'clear_rate_cache')
         ));
         register_setting('zimrate-options', 'zimrate-interval', array(
-            'default' => 'hourly',
+            'default' => MINUTE_IN_SECONDS,
             'sanitize_callback' => array(Functions::class, 'clear_rate_cache')
         ));
         register_setting('zimrate-options', 'zimrate-cushion', array(
             'type' => 'integer',
             'default' => 1,
-        ));
-        register_setting('zimrate-options', 'zimrate-currencies', array(
-            'default' => 'RBZ',
         ));
     }
 
@@ -194,16 +251,10 @@ class Admin extends BaseController
                     'style' => 'width: 100%;'
                 );
 
-                $options = array(
-                    'max' => 'Maximum',
-                    'mean' => 'Average',
-                    'min' => 'Minimum',
-                );
-
                 $this->print_html_select(
                     $attr,
-                    $options,
-                    get_option('zimrate-prefer', 'mean'),
+                    Functions::supported_prefers(),
+                    strtoupper(get_option('zimrate-prefer', Functions::default_prefer())),
                     __('The exchange rate value to use.', Functions::get_plugin_slug())
                 );
             },
@@ -259,29 +310,6 @@ class Admin extends BaseController
             'zimrate-options',
             'zimrate-options-section',
             array('label_for' => 'zimrate-cushion')
-        );
-
-        add_settings_field(
-            'zimrate-currencies',
-            __('Preferred Rate', Functions::get_plugin_slug()),
-            function () {
-                $attr = array(
-                    'name' => 'zimrate-currencies',
-                    'id' => 'zimrate-currencies',
-                    'required' => 'true',
-                    'style' => 'width: 100%;'
-                );
-
-                $this->print_html_select(
-                    $attr,
-                    Functions::supported_currencies(),
-                    Functions::get_selected_currency(),
-                    __('The preferred exchange rate', Functions::get_plugin_slug())
-                );
-            },
-            'zimrate-options',
-            'zimrate-options-section',
-            array('label_for' => 'zimrate-currencies')
         );
     }
 
@@ -377,7 +405,7 @@ class Admin extends BaseController
     }
 
     /**
-     * Add Zimbabwean Currency to woocommerce
+     * Add any currency we cover that woocommerce does not know
      *
      * @since 1.0.0
      * @version 1.1.0
@@ -386,18 +414,18 @@ class Admin extends BaseController
      */
     public function add_woocommerce_currencies(array $currencies): array
     {
-        if (!isset($currencies[Functions::get_iso()])) {
-            $currencies[Functions::get_iso()] = __(
-                'Zimbabwean Dollar',
-                Functions::get_plugin_slug()
-            );
+        // only the codes WooCommerce does not already know need adding
+        foreach (Functions::supported_currencies() as $code => $name) {
+            if (!isset($currencies[$code])) {
+                $currencies[$code] = $name;
+            }
         }
 
         return $currencies;
     }
 
     /**
-     * Add Zimbabwean Currency Symbol to woocommerce
+     * Add a symbol for any currency we had to add
      *
      * @since 1.0.0
      * @version 1.1.0
@@ -406,8 +434,10 @@ class Admin extends BaseController
      */
     public function add_woocommerce_currency_symbols(array $currencies): array
     {
-        if (!isset($currencies[Functions::get_iso()])) {
-            $currencies[Functions::get_iso()] = '&#36;';
+        foreach (Functions::supported_currencies() as $code => $name) {
+            if (!isset($currencies[$code])) {
+                $currencies[$code] = '&#36;';
+            }
         }
 
         return $currencies;

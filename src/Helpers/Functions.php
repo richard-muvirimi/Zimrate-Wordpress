@@ -60,126 +60,347 @@ class Functions
     }
 
     /**
-     * Get Zimbabwean iso code
+     * Get the Zimrate GraphQL endpoint
      *
-     * @since 1.0.0
+     * @since 1.1.6
      * @return string
      */
-    public static function get_iso(): string
+    public static function get_api_url(): string
     {
-        return apply_filters('zimrate-iso', 'ZWL');
+        return apply_filters('zimrate-api-url', 'https://zimrate.tyganeutronics.com/api/graphql');
     }
 
     /**
-     * Get Zimbabwean iso codes
+     * Currency to use when none is selected or the selected one is unavailable
      *
-     * @since 1.0.0
+     * @since 1.1.6
+     * @return string
+     */
+    public static function default_currency(): string
+    {
+        return apply_filters('zimrate-default-currency', 'ZWG');
+    }
+
+    /**
+     * Base currency to quote rates against when none is selected
+     *
+     * @since 1.1.6
+     * @return string
+     */
+    public static function default_base(): string
+    {
+        return apply_filters('zimrate-default-base', 'USD');
+    }
+
+    /**
+     * How to combine the sources behind a rate when none is selected.
+     *
+     * The median ignores the outliers a handful of scraped sources can throw,
+     * which the mean would carry straight into a price.
+     *
+     * @since 1.1.6
+     * @return string
+     */
+    public static function default_prefer(): string
+    {
+        return apply_filters('zimrate-default-prefer', 'MEDIAN');
+    }
+
+    /**
+     * Run a query against the Zimrate GraphQL api.
+     *
+     * The api answers with a 200 even for failed queries, so the body has to be
+     * inspected for an "errors" key before the data can be trusted.
+     *
+     * @since 1.1.6
+     * @param string $query
+     * @param array $variables Empty values are dropped, the api rejects an
+     *                         explicitly null currency.
+     * @return array|false The data payload, false on failure.
+     */
+    public static function graphql(string $query, array $variables = [])
+    {
+        $response = wp_remote_post(self::get_api_url(), [
+            'headers' => ['Content-Type' => 'application/json'],
+            'body' => wp_json_encode([
+                'query' => $query,
+                'variables' => (object) array_filter($variables),
+            ]),
+        ]);
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        if (wp_remote_retrieve_response_code($response) !== 200) {
+            return false;
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (!is_array($body) || !empty($body['errors']) || !is_array($body['data'] ?? null)) {
+            return false;
+        }
+
+        return $body['data'];
+    }
+
+    /**
+     * Read an enum the api defines.
+     *
+     * Every list the settings page offers comes from the schema rather than
+     * from the plugin, so a vocabulary change upstream cannot leave a stale
+     * option behind.  Returns [value => value] for use as select options and
+     * is cached for an hour.
+     *
+     * @since 1.1.6
+     * @param string $type The enum type name
      * @return array
      */
-    public static function get_isos(): array
+    public static function fetch_enum(string $type): array
     {
-        return apply_filters('zimrate-isos', [self::get_iso(), 'ZWE', 'ZWD']);
+        $key = 'zimrate-enum-' . strtolower($type);
+
+        $cached = get_transient($key);
+
+        if ($cached !== false) {
+            return $cached;
+        }
+
+        $data = self::graphql(
+            'query Enum($type: String!) { __type(name: $type) { enumValues { name } } }',
+            ['type' => $type]
+        );
+
+        if ($data === false || !isset($data['__type']['enumValues'])) {
+            return [];
+        }
+
+        $values = [];
+        foreach ($data['__type']['enumValues'] as $value) {
+            $values[$value['name']] = $value['name'];
+        }
+
+        if (!empty($values)) {
+            set_transient($key, $values, HOUR_IN_SECONDS);
+        }
+
+        return $values;
+    }
+
+    /**
+     * Check a cached payload still holds rates.
+     *
+     * Releases before 1.1.6 cached api error bodies as though they were rates,
+     * and those entries have a month long lifetime, so they have to be ignored
+     * rather than waited out.
+     *
+     * @since 1.1.6
+     * @param mixed $rates
+     * @return bool
+     */
+    private static function is_rates($rates, string $base): bool
+    {
+        return is_array($rates) && isset($rates[$base]) && is_array($rates[$base]);
+    }
+
+    /**
+     * Build the transient key for a rate lookup.
+     *
+     * Rates vary by base and currency, so both have to be part of the key.  The live key also carries a cache version that is bumped when
+     * settings change, which invalidates every combination at once without
+     * having to enumerate them.  Backups deliberately leave the version out so
+     * they survive a settings save.
+     *
+     * @since 1.1.6
+     * @param string $base
+     * @param string|false $currency
+     * @param bool $backup
+     * @return string
+     */
+    private static function cache_key(string $base, $currency, bool $backup = false): string
+    {
+        $key = 'zimrate-' . strtolower($base)
+            . ($currency ? '-' . strtolower($currency) : '');
+
+        return $backup ? $key . '-backup' : $key . '-v' . self::cache_version();
+    }
+
+    /**
+     * Current rate cache version
+     *
+     * @since 1.1.6
+     * @return int
+     */
+    private static function cache_version(): int
+    {
+        return intval(get_option('zimrate-cache-version', 1));
     }
 
     /**
      * Get exchange rates
      *
-     * @version 1.1.2
+     * @version 1.1.6
      * @since 1.0.0
      * @param string|false $currency
+     * @param string|null $base Quote against this base instead of the setting
      * @return array
      */
-    public static function get_rates($currency = false): array
+    public static function get_rates($currency = false, $base = null): array
     {
-        $key = 'zimrate' . ($currency ? '-' . $currency : '');
+        $base = $base ?: self::default_base();
+
+        $key = self::cache_key($base, $currency);
 
         $rates = get_transient($key);
 
-        if ($rates === false) {
-            $url = 'https://zimrate.tyganeutronics.com/api/v1';
+        if (self::is_rates($rates, $base)) {
+            return $rates;
+        }
 
-            $body = [
-                'prefer' => get_option('zimrate-prefer', 'mean'),
-            ];
-            
-            if ($currency) {
-                $body['currency'] = $currency;
-            }
+        $data = self::query_rates($base, $currency);
 
-            $args = [
-                'body' => $body,
-            ];
+        if ($data !== false) {
+            $rates = apply_filters('zimrate-rates', array(
+                $base => $data['rate'] ?? array(),
+                "info" => $data['info'] ?? '',
+            ));
 
-            $response = wp_remote_post($url, $args);
+            set_transient(
+                $key,
+                $rates,
+                get_option('zimrate-interval', MINUTE_IN_SECONDS)
+            );
 
-            if (is_wp_error($response)) {
-                $rates = get_transient($key . '-backup');
+            set_transient(
+                self::cache_key($base, $currency, true),
+                $rates,
+                defined("MONTH_IN_SECONDS") ?  MONTH_IN_SECONDS : DAY_IN_SECONDS * 30
+            );
 
-                if ($rates === false) {
-                    if ($currency !== false) {
-                        $backup = get_transient("zimrate-backup");
+            return $rates;
+        }
 
-                        if ($backup && isset($backup['USD'])) {
-                            foreach ($backup['USD'] as $rate) {
-                                if ($rate['currency'] == $currency) {
-                                    $rates["USD"][] = $rate;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    
-                    if ($rates === false) {
-                        $rates = array(
-                            "USD" => array(),
-                            "info" => __("Cannot load rates at this time", "zimrate")
+        // the request failed, fall back on the last response we know was good
+        $backup = get_transient(self::cache_key($base, $currency, true));
+
+        if (self::is_rates($backup, $base)) {
+            return $backup;
+        }
+
+        if ($currency !== false) {
+            $backup = get_transient(self::cache_key($base, false, true));
+
+            if (self::is_rates($backup, $base)) {
+                foreach ($backup[$base] as $rate) {
+                    if ($rate['currency'] == $currency) {
+                        return array(
+                            $base => array($rate),
+                            "info" => $backup['info'] ?? '',
                         );
                     }
                 }
-            } else {
-                $rates = apply_filters(
-                    'zimrate-rates',
-                    json_decode(wp_remote_retrieve_body($response), true)
-                );
-
-                set_transient(
-                    $key,
-                    $rates,
-                    get_option('zimrate-interval', MINUTE_IN_SECONDS)
-                );
-
-                set_transient($key . '-backup', $rates, defined("MONTH_IN_SECONDS") ?  MONTH_IN_SECONDS : DAY_IN_SECONDS * 30);
             }
         }
 
-        return $rates;
+        return array(
+            $base => array(),
+            "info" => __("Cannot load rates at this time", "zimrate")
+        );
+    }
+
+    /**
+     * Ask the api for rates
+     *
+     * @since 1.1.6
+     * @param string $base
+     * @param string|false $currency
+     * @return array|false
+     */
+    private static function query_rates(string $base, $currency)
+    {
+        return self::graphql(
+            'query Rates($base: Base, $currency: Currency, $prefer: Prefer) {' .
+                ' rate(base: $base, currency: $currency, prefer: $prefer)' .
+                ' { currency rate last_checked last_updated }' .
+                ' info' .
+                ' }',
+            [
+                'base' => $base,
+                'currency' => $currency,
+                'prefer' => strtoupper(get_option('zimrate-prefer', self::default_prefer())),
+            ]
+        );
     }
 
     /**
      * Get exchange rate for currency
      *
-     * @version 1.1.2
+     * @version 1.1.6
      * @since 1.0.0
+     * @param string|false $currency
+     * @param string|null $base Quote against this base instead of the setting
+     * @return float
+     */
+    public static function get_rate($currency = false, $base = null): float
+    {
+        $base = $base ?: self::default_base();
+
+        $currency = $currency ?: self::default_currency();
+
+        $rates = self::get_rates($currency, $base);
+
+        if (isset($rates[$base]) && !empty($rates[$base])) {
+            return floatval(array_shift($rates[$base])['rate']);
+        }
+
+        $fallback = self::default_currency();
+
+        if ($currency === $fallback) {
+            return 1.0;
+        }
+
+        return self::get_rate($fallback, $base);
+    }
+
+    /**
+     * Every ground rate the api provides, keyed by currency, quoted against USD.
+     *
+     * The plugins we integrate with keep USD based rate tables filled from
+     * exchange feeds.  Those feeds do not see the rates actually being used on
+     * the ground, which is the whole reason this plugin exists, so every
+     * currency the api covers gets overridden rather than a chosen one.
+     *
+     * @since 1.1.6
+     * @return array
+     */
+    public static function get_rates_from_usd(): array
+    {
+        $rates = self::get_rates(false, 'USD');
+
+        $map = array();
+        foreach ($rates['USD'] ?? array() as $rate) {
+            $map[$rate['currency']] = self::apply_cushion(floatval($rate['rate']));
+        }
+
+        return apply_filters('zimrate-usd-rates', $map);
+    }
+
+    /**
+     * Get the rate a USD based plugin expects.
+     *
+     * The plugins we integrate with keep rate tables quoted against USD, so an
+     * integration needs the USD rate no matter which base the site picked for
+     * its own display.  Feeding them the site's base would silently misprice
+     * every product by the USD to base ratio.
+     *
+     * @since 1.1.6
      * @param string|false $currency
      * @return float
      */
-    public static function get_rate($currency = false): float
+    public static function get_rate_from_usd($currency = false): float
     {
-        $rates = self::get_rates($currency ?: self::get_selected_currency());
-
-        if ($rates === false) {
-            return 1.0;
-        } else {
-            if (isset($rates['USD']) && !empty($rates['USD'])) {
-                return floatval(array_shift($rates['USD'])['rate']);
-            } else {
-                if ($currency == 'RBZ') {
-                    return 1.0;
-                } else {
-                    return self::get_rate('RBZ');
-                }
-            }
-        }
+        return self::get_rate($currency, 'USD');
     }
 
     /**
@@ -191,10 +412,12 @@ class Functions
      */
     public static function clear_rate_cache($value): string
     {
-        delete_transient('zimrate');
+        // bumping the version orphans every live rate key at once, the
+        // vocabularies are dropped so a changed setting re-reads them
+        update_option('zimrate-cache-version', self::cache_version() + 1);
 
-        foreach (self::supported_currencies() as $currency => $name) {
-            delete_transient('zimrate-' . $currency);
+        foreach (['base', 'currency', 'prefer'] as $type) {
+            delete_transient('zimrate-enum-' . $type);
         }
 
         return $value;
@@ -252,12 +475,34 @@ class Functions
      */
     public static function supported_currencies(): array
     {
-        return apply_filters('zimrate-currencies', [
-            'BOND' => __('Bond Note Rate', 'zimrate'),
-            'OMIR' => __('Old Mutual Implied Rate', 'zimrate'),
-            'RBZ' => __('Reserve Bank Rate', 'zimrate'),
-            'RTGS' => __('Real Time Gross Settlement Rate', 'zimrate'),
-        ]);
+        return apply_filters('zimrate-currencies', self::fetch_enum('Currency'));
+    }
+
+    /**
+     * Get the base currencies rates can be quoted against
+     *
+     * @since 1.1.6
+     * @return array
+     */
+    public static function supported_bases(): array
+    {
+        return apply_filters('zimrate-bases', self::fetch_enum('Base'));
+    }
+
+    /**
+     * Get the rate preferences the api offers
+     *
+     * @since 1.1.6
+     * @return array
+     */
+    public static function supported_prefers(): array
+    {
+        $prefers = [];
+        foreach (self::fetch_enum('Prefer') as $prefer) {
+            $prefers[$prefer] = ucfirst(strtolower($prefer));
+        }
+
+        return apply_filters('zimrate-prefers', $prefers);
     }
 
     /**
@@ -310,17 +555,6 @@ class Functions
         }
 
         return $params;
-    }
-
-    /**
-     * Get selected currency
-     *
-     * @since 1.0.0
-     * @return string
-     */
-    public static function get_selected_currency(): string
-    {
-        return get_option('zimrate-currencies', 'RBZ');
     }
 
     /**
