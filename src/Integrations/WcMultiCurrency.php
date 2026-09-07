@@ -33,6 +33,17 @@ class WcMultiCurrency extends BasePluginIntegration
     /**
      * {@inheritdoc}
      */
+    public function get_required_symbols(): array
+    {
+        return [
+            'www.alphavantage.co',
+            'api.exchangerate-api.com',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function get_plugin_name_fallback(): string
     {
         return 'Multi Currency for WooCommerce';
@@ -79,7 +90,10 @@ class WcMultiCurrency extends BasePluginIntegration
             case 'www.alphavantage.co':
                 $params = Functions::url_params($url);
 
-                if (count(array_intersect([$params['from_currency'], $params['to_currency']], Functions::get_isos())) > 0) {
+                if (count(array_intersect(
+                    [$params['from_currency'], $params['to_currency']],
+                    array_keys(Functions::supported_currencies())
+                )) > 0) {
                     $rate = $this->convert_currency(
                         $params['from_currency'],
                         $params['to_currency'],
@@ -97,9 +111,10 @@ class WcMultiCurrency extends BasePluginIntegration
             case 'api.exchangerate-api.com':
                 $rates = json_decode(wp_remote_retrieve_body($response), true);
 
-				$currency = get_option('zimrate-currencies', 'RBZ');
-					
-				$rates['rates'][Functions::get_iso()] = Functions::apply_cushion(Functions::get_rate($currency));
+				$rates['rates'] = array_merge(
+					$rates['rates'],
+					Functions::get_rates_from_usd()
+				);
 				
 				$response['body'] = json_encode($rates);
                 break;
