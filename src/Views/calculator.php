@@ -26,6 +26,8 @@ foreach ($rates['USD'] ?? array() as $row) {
     $raw[$row['currency']] = floatval($row['rate']);
 }
 
+ksort($raw);
+
 // the cushion is applied after the cross rate, applying it to both sides
 // beforehand would cancel it out
 $cushion = $args['cushion'] === 'yes' ? floatval(get_option('zimrate-cushion', 1)) : 0;

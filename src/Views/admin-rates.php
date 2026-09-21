@@ -59,7 +59,12 @@ $base = Functions::default_base(); ?>
 
                 $supported = array_keys(Functions::supported_currencies());
 
-                foreach ($rates[$base] as $index => $rate) :
+                $rows = $rates[$base];
+                usort($rows, function ($a, $b) {
+                    return strcmp($a['currency'], $b['currency']);
+                });
+
+                foreach ($rows as $index => $rate) :
                     if (in_array($rate['currency'], $supported)) : ?>
                         <tr>
                             <td>
