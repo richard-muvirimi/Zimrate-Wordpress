@@ -35,6 +35,21 @@ jobs:
           echo "Tag v${{ steps.get_version.outputs.version }} does not exist - proceeding with deployment"
         fi
     
+    - name: Setup Node.js
+      if: steps.check_tag.outputs.exists == 'false'
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install npm dependencies
+      if: steps.check_tag.outputs.exists == 'false'
+      run: npm ci
+
+    - name: Build block editor bundle
+      if: steps.check_tag.outputs.exists == 'false'
+      run: npm run dist
+
     - name: Cache Composer dependencies
       if: steps.check_tag.outputs.exists == 'false'
       uses: actions/cache@v4
@@ -63,7 +78,7 @@ jobs:
       if: steps.check_tag.outputs.exists == 'false'
       run: |
         mkdir build
-        rsync -rvt --delete --include 'vendor' --exclude-from='.gitignore' --exclude '.git*' --exclude 'build' ./ build/
+        rsync -rvt --delete --include 'vendor' --include 'src/Views/js/dist' --exclude-from='.gitignore' --exclude '.git*' --exclude 'build' --exclude 'ui' --exclude 'node_modules' ./ build/
       
     - name: WordPress Plugin Deploy
       if: steps.check_tag.outputs.exists == 'false'

@@ -165,17 +165,7 @@ class Admin extends BaseController
     {
         echo Template::get_template(
             Functions::get_plugin_slug('-calculator'),
-            array(
-                'args' => array(
-                    'base' => Functions::default_base(),
-                    'currency' => Functions::default_currency(),
-                    'amount' => 1,
-                    'precision' => 2,
-                    'cushion' => 'yes',
-                    'table' => 'yes',
-                    'open' => 'no',
-                ),
-            ),
+            Functions::calculator(array('table' => true)),
             'calculator.php'
         );
     }

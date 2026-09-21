@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "zimrate/rate",
+    "title": "Exchange Rate",
+    "category": "widgets",
+    "icon": "money-alt",
+    "description": "The current rate between two currencies, what the [zimrate] shortcode prints.",
+    "keywords": [ "currency", "exchange", "rate", "zimrate" ],
+    "textdomain": "zimrate",
+    "attributes": {
+        "base": { "type": "string", "default": "" },
+        "currency": { "type": "string", "default": "" },
+        "value": { "type": "number", "default": 1 },
+        "precision": { "type": "integer", "default": 2 },
+        "format": { "type": "boolean", "default": false },
+        "cushion": { "type": "boolean", "default": true }
+    },
+    "supports": {
+        "html": false,
+        "align": true,
+        "color": { "text": true, "background": true },
+        "typography": { "fontSize": true, "lineHeight": true },
+        "spacing": { "margin": true, "padding": true }
+    },
+    "editorScript": "zimrate-blocks"
+}

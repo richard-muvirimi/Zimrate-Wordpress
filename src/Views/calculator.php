@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Dashboard rate calculator and rates table
+ * Rate calculator, with the rates table beneath it on the dashboard
  *
  * @package    Zimrate
  * @subpackage Zimrate/Views
@@ -10,62 +10,20 @@
  * @since      1.1.6
  * @version    1.1.6
  *
- * @var array $args
+ * @var string $base
+ * @var string $currency
+ * @var float $amount
+ * @var int $precision
+ * @var float $cushion percent
+ * @var array $bases code => label
+ * @var array $currencies code => label
+ * @var array $rates code => rate against USD, for the script
+ * @var string $info
+ * @var bool $open
+ * @var string $table rendered rates table, empty for none
  */
-
-use RichardMuvirimi\Zimrate\Helpers\Arithmetic;
-use RichardMuvirimi\Zimrate\Helpers\Functions;
 
 defined('ABSPATH') || exit();
-
-// everything is quoted against USD, any other base is a cross rate derived
-// from it, so one response covers every base the reader can pick
-$rates = Functions::get_rates();
-
-$raw = array();
-foreach ($rates['USD'] ?? array() as $row) {
-    $raw[$row['currency']] = floatval($row['rate']);
-}
-
-ksort($raw);
-
-// the cushion is applied after the cross rate, applying it to both sides
-// beforehand would cancel it out
-$cushion = $args['cushion'] === 'yes' ? floatval(get_option('zimrate-cushion', 1)) : 0;
-$precision = intval($args['precision']);
-
-$bases = array();
-foreach (Functions::supported_bases() as $code => $label) {
-    if ($code === 'USD' || isset($raw[$code])) {
-        $bases[] = $code;
-    }
-}
-
-$base = in_array($args['base'], $bases, true) ? $args['base'] : reset($bases);
-$currency = isset($raw[$args['currency']]) ? $args['currency'] : key($raw);
-
-/**
- * Cross rate for a currency against the chosen base, cushion applied, rounded
- * to the precision shown
- *
- * @param string $to
- * @return string
- */
-$rate_for = function ($to) use ($raw, $base, $cushion, $precision) {
-    if ($to === $base) {
-        $rate = '1';
-    } elseif ($base === 'USD') {
-        $rate = $raw[$to];
-    } else {
-        $rate = Arithmetic::div($raw[$to], $raw[$base]);
-    }
-
-    if ($cushion) {
-        $rate = Functions::apply_cushion($rate);
-    }
-
-    return Arithmetic::round($rate, $precision);
-};
 ?>
 
 <div class="zimrate-calculator"
@@ -73,12 +31,12 @@ $rate_for = function ($to) use ($raw, $base, $cushion, $precision) {
      data-precision="<?php echo esc_attr($precision); ?>"
      data-cushion="<?php echo esc_attr($cushion); ?>"
      data-base="<?php echo esc_attr($base); ?>"
-     data-rates="<?php echo esc_attr(wp_json_encode($raw)); ?>">
+     data-rates="<?php echo esc_attr(wp_json_encode($rates)); ?>">
 
-    <?php if (empty($raw)) : ?>
+    <?php if (empty($rates)) : ?>
 
         <p class="zimrate-calculator-empty">
-            <?php echo esc_html($rates['info'] ?? __('No rates are available right now.', 'zimrate')); ?>
+            <?php echo esc_html($info ?: __('No rates are available right now.', 'zimrate')); ?>
         </p>
 
     <?php else : ?>
@@ -87,10 +45,10 @@ $rate_for = function ($to) use ($raw, $base, $cushion, $precision) {
             <label class="zimrate-calculator-field">
                 <span>
                     <select data-zimrate-base>
-                        <?php foreach ($bases as $code) : ?>
+                        <?php foreach ($bases as $code => $label) : ?>
                             <option value="<?php echo esc_attr($code); ?>"
                                 <?php selected($code, $base); ?>>
-                                <?php echo esc_html(Functions::currency_label($code)); ?>
+                                <?php echo esc_html($label); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -100,7 +58,7 @@ $rate_for = function ($to) use ($raw, $base, $cushion, $precision) {
                        min="0"
                        inputmode="decimal"
                        data-zimrate-amount
-                       value="<?php echo esc_attr($args['amount']); ?>" />
+                       value="<?php echo esc_attr($amount); ?>" />
             </label>
 
             <button type="button"
@@ -111,10 +69,10 @@ $rate_for = function ($to) use ($raw, $base, $cushion, $precision) {
             <label class="zimrate-calculator-field">
                 <span>
                     <select data-zimrate-currency>
-                        <?php foreach ($raw as $code => $value) : ?>
+                        <?php foreach ($currencies as $code => $label) : ?>
                             <option value="<?php echo esc_attr($code); ?>"
                                 <?php selected($code, $currency); ?>>
-                                <?php echo esc_html(Functions::currency_label($code)); ?>
+                                <?php echo esc_html($label); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -125,41 +83,11 @@ $rate_for = function ($to) use ($raw, $base, $cushion, $precision) {
 
         <p class="zimrate-calculator-summary" data-zimrate-summary></p>
 
-        <?php if ($args['table'] === 'yes') : ?>
+        <?php if ($table) : ?>
 
-            <details class="zimrate-calculator-table" <?php echo $args['open'] === 'yes' ? 'open' : ''; ?>>
+            <details class="zimrate-calculator-table" <?php echo $open ? 'open' : ''; ?>>
                 <summary><?php esc_html_e('Current rates', 'zimrate'); ?></summary>
-
-                <div class="zimrate-calculator-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th><?php esc_html_e('Currency', 'zimrate'); ?></th>
-                                <th data-zimrate-heading>
-                                    <?php printf(
-                                        /* translators: %s: base currency code */
-                                        esc_html__('Rate (per 1 %s)', 'zimrate'),
-                                        esc_html($base)
-                                    ); ?>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($raw as $code => $value) : ?>
-                                <tr data-zimrate-row="<?php echo esc_attr($code); ?>">
-                                    <td><?php echo esc_html(Functions::currency_label($code)); ?></td>
-                                    <td data-zimrate-cell><?php echo esc_html(
-                                        number_format_i18n(floatval($rate_for($code)), $precision)
-                                    ); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <?php if (!empty($rates['info'])) : ?>
-                    <p class="zimrate-calculator-info"><?php echo esc_html($rates['info']); ?></p>
-                <?php endif; ?>
+                <?php echo $table; ?>
             </details>
 
         <?php endif; ?>

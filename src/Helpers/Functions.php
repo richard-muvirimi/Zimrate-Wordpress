@@ -431,6 +431,133 @@ class Functions
     }
 
     /**
+     * Rates quoted against USD keyed by currency, alphabetical, as the api sent
+     * them
+     *
+     * @since 1.1.6
+     * @return array
+     */
+    public static function get_usd_rates(): array
+    {
+        $usd = array();
+        foreach (self::get_rates()['USD'] as $rate) {
+            $usd[$rate['currency']] = $rate['rate'];
+        }
+
+        ksort($usd);
+
+        return $usd;
+    }
+
+    /**
+     * Data for the rates table view
+     *
+     * Every currency against the base, cushion applied after the cross rate
+     * (applying it to both sides beforehand would cancel it out), rounded to
+     * the precision shown.
+     *
+     * @since 1.1.6
+     * @param string $base
+     * @param int $precision
+     * @param bool $cushion
+     * @return array
+     */
+    public static function rates_table(string $base, int $precision, bool $cushion): array
+    {
+        $usd = self::get_usd_rates();
+
+        $base = strtoupper($base);
+        if ($base !== 'USD' && !isset($usd[$base])) {
+            $base = 'USD';
+        }
+
+        $rows = array();
+        foreach ($usd as $code => $rate) {
+            if ($code === $base) {
+                $rate = '1';
+            } elseif ($base !== 'USD') {
+                $rate = Arithmetic::div($rate, $usd[$base]);
+            }
+
+            if ($cushion) {
+                $rate = self::apply_cushion($rate);
+            }
+
+            $rows[$code] = array(
+                'label' => self::currency_label($code),
+                'rate' => Arithmetic::round($rate, $precision),
+            );
+        }
+
+        return array(
+            'base' => $base,
+            'precision' => $precision,
+            'rows' => $rows,
+            'info' => self::get_rates()['info'] ?? '',
+        );
+    }
+
+    /**
+     * Data for the calculator view
+     *
+     * The rates go to the page as json so the script can convert without a
+     * request, the table is rendered here when asked for.
+     *
+     * @since 1.1.6
+     * @param array $args base, currency, amount, precision, cushion, table, open
+     * @return array
+     */
+    public static function calculator(array $args): array
+    {
+        $args = wp_parse_args($args, array(
+            'base' => self::default_base(),
+            'currency' => self::default_currency(),
+            'amount' => 1,
+            'precision' => 2,
+            'cushion' => true,
+            'table' => false,
+            'open' => false,
+        ));
+
+        $usd = self::get_usd_rates();
+
+        $currencies = array();
+        foreach ($usd as $code => $rate) {
+            $currencies[$code] = self::currency_label($code);
+        }
+
+        $bases = array('USD' => self::currency_label('USD')) + $currencies;
+
+        $base = strtoupper($args['base']);
+        $base = isset($bases[$base]) ? $base : 'USD';
+
+        $currency = strtoupper($args['currency']);
+        $currency = isset($currencies[$currency]) ? $currency : (string) key($currencies);
+
+        $precision = intval($args['precision']);
+
+        return array(
+            'base' => $base,
+            'currency' => $currency,
+            'amount' => floatval($args['amount']),
+            'precision' => $precision,
+            'cushion' => $args['cushion'] ? floatval(get_option('zimrate-cushion', 1)) : 0,
+            'bases' => $bases,
+            'currencies' => $currencies,
+            'rates' => array_map('floatval', $usd),
+            'info' => self::get_rates()['info'] ?? '',
+            'open' => (bool) $args['open'],
+            'table' => $args['table']
+                ? Template::get_template(
+                    self::get_plugin_slug('-rates-table'),
+                    self::rates_table($base, $precision, (bool) $args['cushion']),
+                    'rates-table.php'
+                )
+                : '',
+        );
+    }
+
+    /**
      * Get the rate a USD based plugin expects, without cushion
      *
      * @since 1.1.6

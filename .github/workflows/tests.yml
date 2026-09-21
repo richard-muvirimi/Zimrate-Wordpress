@@ -18,7 +18,19 @@ jobs:
     steps:
     - name: Checkout build
       uses: actions/checkout@v3
-    
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install npm dependencies
+      run: npm ci
+
+    - name: Type check and build block editor bundle
+      run: npm run types && npm run dist
+
     - name: Cache Composer dependencies
       uses: actions/cache@v4
       with:

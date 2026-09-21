@@ -21,6 +21,15 @@ jobs:
       with:
         ref: develop
     
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Update npm dependencies
+      run: npm update
+
     - name: Cache Composer dependencies
       uses: actions/cache@v4
       with:
@@ -38,7 +47,7 @@ jobs:
     - name: Check for changes
       id: check_changes
       run: |
-        if [[ -n $(git status -s -- composer.json composer.lock) ]]; then
+        if [[ -n $(git status -s -- composer.json composer.lock package.json package-lock.json) ]]; then
           echo "changes=true" >> $GITHUB_OUTPUT
         else
           echo "changes=false" >> $GITHUB_OUTPUT
@@ -59,3 +68,5 @@ jobs:
         add-paths: |
           composer.json
           composer.lock
+          package.json
+          package-lock.json

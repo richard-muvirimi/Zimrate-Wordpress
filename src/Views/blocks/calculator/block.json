@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "zimrate/calculator",
+    "title": "Currency Calculator",
+    "category": "widgets",
+    "icon": "calculator",
+    "description": "Convert an amount between the currencies ZimRate covers, at the latest ground rate.",
+    "keywords": [ "currency", "convert", "calculator", "zimrate" ],
+    "textdomain": "zimrate",
+    "attributes": {
+        "base": { "type": "string", "default": "" },
+        "currency": { "type": "string", "default": "" },
+        "amount": { "type": "number", "default": 1 },
+        "precision": { "type": "integer", "default": 2 },
+        "cushion": { "type": "boolean", "default": true }
+    },
+    "supports": {
+        "html": false,
+        "align": [ "wide", "full" ],
+        "spacing": { "margin": true, "padding": true }
+    },
+    "editorScript": "zimrate-blocks",
+    "style": "zimrate-calculator",
+    "viewScript": "zimrate-calculator"
+}

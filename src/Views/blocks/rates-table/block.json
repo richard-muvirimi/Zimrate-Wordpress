@@ -1,0 +1,23 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "zimrate/rates-table",
+    "title": "Exchange Rates Table",
+    "category": "widgets",
+    "icon": "editor-table",
+    "description": "Every currency ZimRate covers, quoted against a base of your choosing.",
+    "keywords": [ "currency", "exchange", "rates", "table", "zimrate" ],
+    "textdomain": "zimrate",
+    "attributes": {
+        "base": { "type": "string", "default": "" },
+        "precision": { "type": "integer", "default": 2 },
+        "cushion": { "type": "boolean", "default": true }
+    },
+    "supports": {
+        "html": false,
+        "align": [ "wide", "full" ],
+        "spacing": { "margin": true, "padding": true }
+    },
+    "editorScript": "zimrate-blocks",
+    "style": "zimrate-calculator"
+}
