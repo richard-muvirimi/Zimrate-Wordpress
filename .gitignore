@@ -19,6 +19,11 @@ zimrate-wordpress.code-workspace
 .DS_Store
 Thumbs.db
 
+# php-actions/composer writes these into the workspace on every run, and
+# DOCKER_ENV carries the job's token
+docker_tag
+DOCKER_ENV
+
 # Testing
 .phpunit.result.cache
 /coverage/

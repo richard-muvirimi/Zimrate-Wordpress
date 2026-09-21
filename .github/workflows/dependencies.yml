@@ -38,7 +38,7 @@ jobs:
     - name: Check for changes
       id: check_changes
       run: |
-        if [[ -n $(git status -s) ]]; then
+        if [[ -n $(git status -s -- composer.json composer.lock) ]]; then
           echo "changes=true" >> $GITHUB_OUTPUT
         else
           echo "changes=false" >> $GITHUB_OUTPUT
@@ -55,3 +55,7 @@ jobs:
         branch: 'dependencies/composer-update'
         base: develop
         delete-branch: true
+        # only the dependency files, never whatever else the run left behind
+        add-paths: |
+          composer.json
+          composer.lock
