@@ -19,7 +19,7 @@ defined('ABSPATH') || exit();
 
 // everything is quoted against USD, any other base is a cross rate derived
 // from it, so one response covers every base the reader can pick
-$rates = Functions::get_rates(false, 'USD');
+$rates = Functions::get_rates();
 
 $raw = array();
 foreach ($rates['USD'] ?? array() as $row) {

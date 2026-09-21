@@ -16,7 +16,7 @@
 use RichardMuvirimi\Zimrate\Helpers\Functions;
 
 $rates = Functions::get_rates();
-$base = Functions::default_base(); ?>
+$base = 'USD'; ?>
 
 <h2>
     <?php _e('Rates', Functions::get_plugin_slug()); ?>
