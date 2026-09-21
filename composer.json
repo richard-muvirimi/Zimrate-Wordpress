@@ -89,7 +89,6 @@
     "require": {
         "php": ">=7.3",
         "ext-json": "*",
-        "br33f/php-ga4-mp": "^0.1.4",
         "symfony/polyfill-php74": "^1.33",
         "symfony/polyfill-php80": "^1.33",
         "symfony/polyfill-php81": "^1.33",

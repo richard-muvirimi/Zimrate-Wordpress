@@ -72,6 +72,7 @@ class Plugin extends BaseController
         delete_option('zimrate-cushion');
         delete_option('zimrate-currencies');
         delete_option('zimrate-analytics');
+        delete_option('zimrate-analytics-salt');
         
         // Clean up any plugin data
         Logger::logEvent("uninstall_plugin");

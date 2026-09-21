@@ -11,99 +11,116 @@
 
 namespace RichardMuvirimi\Zimrate\Helpers;
 
-use RichardMuvirimi\Zimrate\Vendor\Br33f\Ga4\MeasurementProtocol\Dto\Common\UserProperty;
-use RichardMuvirimi\Zimrate\Vendor\Br33f\Ga4\MeasurementProtocol\Dto\Event\BaseEvent;
-use RichardMuvirimi\Zimrate\Vendor\Br33f\Ga4\MeasurementProtocol\Dto\Parameter\BaseParameter;
-use RichardMuvirimi\Zimrate\Vendor\Br33f\Ga4\MeasurementProtocol\Dto\Request\BaseRequest;
-use RichardMuvirimi\Zimrate\Vendor\Br33f\Ga4\MeasurementProtocol\Service;
 use Zimrate_ClientIP as ClientIP;
-use Exception;
+use Throwable;
 
 /**
  * Class to handle plugin logging functions
+ *
+ * Sends plugin lifecycle events to GA4 over the Measurement Protocol, which is
+ * a single JSON post.  Mirrors the api's own analytics middleware: no raw ip,
+ * no user_id for anonymous callers, no page_view for something that is not a
+ * page, and sessions that expire.
  *
  * @package    Zimrate
  * @subpackage Zimrate/Helpers
  *
  * @author Richard Muvirimi <richard@tyganeutronics.com>
  * @since 1.0.0
+ * @version 1.1.6
  */
 class Logger
 {
+    /**
+     * Measurement Protocol collection endpoint
+     *
+     * @since 1.1.6
+     */
+    const ENDPOINT = 'https://www.google-analytics.com/mp/collect';
+
+    /**
+     * Sessions rotate on this window, GA4's own web sessions time out at 30 min
+     *
+     * @since 1.1.6
+     */
+    const SESSION_WINDOW = 30 * MINUTE_IN_SECONDS;
 
     /**
      * Log events to Google analytics
      *
+     * Fires and forgets, it must never delay or fail whatever called it.
+     *
      * @param string $event
      * @return void
      * @since 1.0.0
+     * @version 1.1.6
      *
      * @author Richard Muvirimi <richard@tyganeutronics.com>
      */
     public static function logEvent(string $event): void
     {
-
-        if (get_option(Functions::get_plugin_slug("-analytics"), "off") === "on") {
-
-            $credentials = self::fetchAnalyticsCredentials();
-
-            if (is_array($credentials)) {
-
-                try {
-
-                    $clientIp = ClientIP::get();
-
-                    $ga4Service = new Service($credentials["MEASUREMENT_PROTOCOL_API_SECRET"], $credentials["MEASUREMENT_ID"]);
-                    $ga4Service->setIpOverride($clientIp);
-                    $ga4Service->setOptions([
-                        'User-Agent' => self::getUserAgent()
-                    ]);
-
-                    $baseRequest = new BaseRequest($clientIp);
-
-                    $sessionId = self::getSessionId();
-
-                    $baseRequest->setUserId($sessionId);
-
-                    // Environment Properties
-                    $baseRequest->addUserProperty(new UserProperty("php_version", PHP_VERSION));
-                    $baseRequest->addUserProperty(new UserProperty("wordpress_version", get_bloginfo("version")));
-                    $baseRequest->addUserProperty(new UserProperty("plugin_version", ZIMRATE_VERSION));
-
-                    $baseEvent = new BaseEvent($event);
-
-                    // Create Base Event
-                    $sessionIdParam = new BaseParameter($sessionId);
-                    $baseEvent->addParam("engagement_time_msec", $sessionIdParam);
-
-                    $engagementTimeParam = new BaseParameter(self::getEngagementTime());
-                    $baseEvent->addParam("session_id", $engagementTimeParam);
-
-                    $baseRequest->addEvent($baseEvent);
-
-                    // Create View Page Event
-                    $pageViewEvent = new BaseEvent("page_view");
-
-                    $pageViewParam = new BaseParameter(site_url());
-                    $pageViewEvent->addParam("page_location", $pageViewParam);
-
-                    $localeParam = new BaseParameter(get_user_locale());
-                    $pageViewEvent->addParam("language", $localeParam);
-
-                    $titleParam = new BaseParameter(get_bloginfo("name"));
-                    $pageViewEvent->addParam("page_title", $titleParam);
-
-                    $baseRequest->addEvent($pageViewEvent);
-
-                    // Send
-                    $ga4Service->send($baseRequest);
-
-                } catch (Exception $e) {
-
-                }
-            }
+        if (get_option(Functions::get_plugin_slug("-analytics"), "off") !== "on") {
+            return;
         }
 
+        try {
+            $credentials = self::fetchAnalyticsCredentials();
+
+            if (!is_array($credentials)) {
+                return;
+            }
+
+            $clientId = self::getClientId();
+
+            // same identity bucketed into windows, so sessions expire instead
+            // of every caller having one session that never ends
+            $sessionId = substr($clientId, 0, 16) . '.' . intval(floor(time() / self::SESSION_WINDOW));
+
+            $payload = array(
+                // no user_id: that field means a known, signed in person, and
+                // reporting anonymous admins as identified users misrepresents
+                // the data
+                'client_id' => $clientId,
+                'user_properties' => array(
+                    'php_version' => array('value' => PHP_VERSION),
+                    'wordpress_version' => array('value' => get_bloginfo('version')),
+                    'plugin_version' => array('value' => ZIMRATE_VERSION),
+                ),
+                // one custom event, no page_view: a plugin lifecycle event is
+                // not a page view, and emitting one puts it in the pages report
+                'events' => array(
+                    array(
+                        'name' => $event,
+                        'params' => array(
+                            // without session_id and engagement_time_msec GA4
+                            // leaves the event out of session and realtime
+                            // reports
+                            'session_id' => $sessionId,
+                            'engagement_time_msec' => '100',
+                            'language' => get_user_locale(),
+                        ),
+                    ),
+                ),
+            );
+
+            wp_remote_post(
+                add_query_arg(
+                    array(
+                        'measurement_id' => $credentials['MEASUREMENT_ID'],
+                        'api_secret' => $credentials['MEASUREMENT_PROTOCOL_API_SECRET'],
+                    ),
+                    self::ENDPOINT
+                ),
+                array(
+                    'headers' => array('Content-Type' => 'application/json'),
+                    'body' => wp_json_encode($payload),
+                    'blocking' => false,
+                    'timeout' => 2,
+                )
+            );
+        } catch (Throwable $e) {
+            // analytics is never worth breaking the caller for
+        }
     }
 
     /**
@@ -154,48 +171,47 @@ class Logger
     }
 
     /**
-     * Get unique session id
+     * Pseudonymous, stable identity for the caller.
+     *
+     * The raw ip must never be sent: Google's Measurement Protocol policy
+     * forbids uploading personal data and an ip counts as such.  It is hashed
+     * with a salt because the ipv4 space is small enough that an unsalted
+     * digest is reversible by brute force.
      *
      * @return string
-     * @since 1.0.0
+     * @since 1.1.6
      *
      * @author Richard Muvirimi <richard@tyganeutronics.com>
      */
-    public static function getSessionId(): string
+    public static function getClientId(): string
     {
-
-        $cookie_name = Functions::get_plugin_slug("-session-id");
-
-        $unique_id = $_COOKIE[$cookie_name] ?? uniqid("zimrate-", true);
-        $domain = parse_url(site_url(), PHP_URL_HOST);
-
-        setcookie($cookie_name, $unique_id, time() + MONTH_IN_SECONDS, "/", $domain, true, true);
-
-        return $unique_id;
-
+        return substr(hash('sha256', self::getSalt() . ClientIP::get() . self::getUserAgent()), 0, 32);
     }
 
     /**
-     * Get engagement millisecond time
+     * Salt for the caller hash, made once and kept.
      *
-     * @return float
-     * @since 1.0.0
+     * A salt made per request would split one caller into a new user every
+     * time, which over counts rather than leaks, but a kept one is what makes
+     * the identity stable.
+     *
+     * @return string
+     * @since 1.1.6
      *
      * @author Richard Muvirimi <richard@tyganeutronics.com>
      */
-    public static function getEngagementTime(): float
+    private static function getSalt(): string
     {
-        $cookie_name = Functions::get_plugin_slug("-session-start");
+        $key = Functions::get_plugin_slug('-analytics-salt');
 
-        $start_time = $_COOKIE[$cookie_name] ?? time();
-        $time_now = time();
+        $salt = get_option($key, '');
 
-        $domain = parse_url(site_url(), PHP_URL_HOST);
+        if ($salt === '') {
+            $salt = bin2hex(random_bytes(16));
 
-        // Update the start time cookie
-        setcookie($cookie_name, $time_now, time() + HOUR_IN_SECONDS, '/', $domain, true, true);
+            add_option($key, $salt, '', 'no');
+        }
 
-        // Calculate the engagement time
-        return ($time_now - $start_time) * 1000;
+        return $salt;
     }
 }
