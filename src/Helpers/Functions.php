@@ -391,7 +391,7 @@ class Functions
     {
         $map = array();
         foreach (self::get_rates()['USD'] as $rate) {
-            $map[$rate['currency']] = self::apply_cushion(floatval($rate['rate']));
+            $map[$rate['currency']] = floatval(self::apply_cushion($rate['rate']));
         }
 
         return apply_filters('zimrate-usd-rates', $map);
@@ -414,9 +414,9 @@ class Functions
         $currency = strtoupper($currency ?: self::default_currency());
         $base = strtoupper($base ?: self::default_base());
 
-        $usd = array('USD' => 1.0);
+        $usd = array('USD' => 1);
         foreach (self::get_rates()['USD'] as $rate) {
-            $usd[$rate['currency']] = floatval($rate['rate']);
+            $usd[$rate['currency']] = $rate['rate'];
         }
 
         if ($currency === $base) {
@@ -427,7 +427,7 @@ class Functions
             return 1.0;
         }
 
-        return $usd[$currency] / $usd[$base];
+        return floatval(Arithmetic::div($usd[$currency], $usd[$base]));
     }
 
     /**
@@ -603,15 +603,22 @@ class Functions
     /**
      * Apply rate cushion
      *
+     * Takes and returns a numeric string so the cushion can sit in the middle
+     * of a decimal calculation, cast the result where a float is wanted.
+     *
+     * @version 1.1.6
      * @since 1.0.0
-     * @param  float   $rate
-     * @return float
+     * @param  float|string $rate
+     * @return string
      */
-    public static function apply_cushion(float $rate): float
+    public static function apply_cushion($rate): string
     {
         $cushion = get_option('zimrate-cushion', 1);
 
-        return apply_filters('zimrate-cushion', $rate + ($cushion * $rate) / 100);
+        return apply_filters(
+            'zimrate-cushion',
+            Arithmetic::add($rate, Arithmetic::div(Arithmetic::mul($cushion, $rate), 100))
+        );
     }
 
     /**

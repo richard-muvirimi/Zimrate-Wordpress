@@ -11,6 +11,7 @@
 
 namespace RichardMuvirimi\Zimrate\Controller;
 
+use RichardMuvirimi\Zimrate\Helpers\Arithmetic;
 use RichardMuvirimi\Zimrate\Helpers\Functions;
 
 /**
@@ -43,19 +44,22 @@ class Site extends BaseController
             Functions::get_shortcode()
         );
 
-        $rate = Functions::get_rate($attributes['currency'], $attributes['base'])
-            * floatval($attributes['value']);
+        $rate = Arithmetic::mul(
+            Functions::get_rate($attributes['currency'], $attributes['base']),
+            floatval($attributes['value'])
+        );
 
         if ($attributes['cushion'] == 'yes') {
             $rate = Functions::apply_cushion($rate);
         }
 
+        $rate = Arithmetic::round($rate, intval($attributes['precision']));
+
         if ($attributes['format'] == 'yes') {
-            $rate = number_format_i18n($rate, intval($attributes['precision']));
-        } else {
-            $rate = round($rate, intval($attributes['precision']));
+            return number_format_i18n(floatval($rate), intval($attributes['precision']));
         }
 
-        return (string) $rate;
+        // unformatted output never carried trailing zeroes
+        return strpos($rate, '.') === false ? $rate : rtrim(rtrim($rate, '0'), '.');
     }
 }

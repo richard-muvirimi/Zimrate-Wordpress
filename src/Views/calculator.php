@@ -13,6 +13,7 @@
  * @var array $args
  */
 
+use RichardMuvirimi\Zimrate\Helpers\Arithmetic;
 use RichardMuvirimi\Zimrate\Helpers\Functions;
 
 defined('ABSPATH') || exit();
@@ -44,21 +45,26 @@ $base = in_array($args['base'], $bases, true) ? $args['base'] : reset($bases);
 $currency = isset($raw[$args['currency']]) ? $args['currency'] : key($raw);
 
 /**
- * Cross rate for a currency against the chosen base, cushion applied
+ * Cross rate for a currency against the chosen base, cushion applied, rounded
+ * to the precision shown
  *
  * @param string $to
- * @return float
+ * @return string
  */
-$rate_for = function ($to) use ($raw, $base, $cushion) {
+$rate_for = function ($to) use ($raw, $base, $cushion, $precision) {
     if ($to === $base) {
-        $rate = 1.0;
+        $rate = '1';
     } elseif ($base === 'USD') {
         $rate = $raw[$to];
     } else {
-        $rate = $raw[$to] / $raw[$base];
+        $rate = Arithmetic::div($raw[$to], $raw[$base]);
     }
 
-    return $rate + ($cushion * $rate) / 100;
+    if ($cushion) {
+        $rate = Functions::apply_cushion($rate);
+    }
+
+    return Arithmetic::round($rate, $precision);
 };
 ?>
 
@@ -143,7 +149,7 @@ $rate_for = function ($to) use ($raw, $base, $cushion) {
                                 <tr data-zimrate-row="<?php echo esc_attr($code); ?>">
                                     <td><?php echo esc_html(Functions::currency_label($code)); ?></td>
                                     <td data-zimrate-cell><?php echo esc_html(
-                                        number_format_i18n($rate_for($code), $precision)
+                                        number_format_i18n(floatval($rate_for($code)), $precision)
                                     ); ?></td>
                                 </tr>
                             <?php endforeach; ?>

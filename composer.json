@@ -98,6 +98,9 @@
         "symfony/polyfill-php85": "^1.33",
         "yidas/client-ip": "^1.0"
     },
+    "suggest": {
+        "ext-bcmath": "Decimal arithmetic on rates, matching the api's own figures digit for digit"
+    },
     "require-dev": {
         "ext-zip": "*",
         "phpcompatibility/phpcompatibility-wp": "^2.1",

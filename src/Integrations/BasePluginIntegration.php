@@ -11,6 +11,7 @@
 
 namespace RichardMuvirimi\Zimrate\Integrations;
 
+use RichardMuvirimi\Zimrate\Helpers\Arithmetic;
 use RichardMuvirimi\Zimrate\Helpers\Functions;
 
 /**
@@ -210,16 +211,16 @@ abstract class BasePluginIntegration
      */
     protected function convert_currency(string $from, string $to, ...$args): float
     {
-        $rate = 1.0;
+        $rate = '1';
 
         if (in_array($from, array_keys(Functions::supported_currencies()))) {
             if ($to == 'USD') {
-                $rate = pow(Functions::get_rate_from_usd($from), -1);
+                $rate = Arithmetic::div(1, Functions::get_rate_from_usd($from));
             } else {
                 $state = $this->save_conversion_state($to, $args);
-                $rate = pow(
-                    Functions::get_rate_from_usd($from) * $this->get_usd_rate($to, ...$args),
-                    -1
+                $rate = Arithmetic::div(
+                    1,
+                    Arithmetic::mul(Functions::get_rate_from_usd($from), $this->get_usd_rate($to, ...$args))
                 );
                 $this->restore_conversion_state($state);
             }
@@ -228,13 +229,15 @@ abstract class BasePluginIntegration
                 $rate = Functions::get_rate_from_usd($to);
             } else {
                 $state = $this->save_conversion_state($from, $args);
-                $rate = Functions::get_rate_from_usd($to)
-                    * $this->get_usd_rate($from, ...$args);
+                $rate = Arithmetic::mul(
+                    Functions::get_rate_from_usd($to),
+                    $this->get_usd_rate($from, ...$args)
+                );
                 $this->restore_conversion_state($state);
             }
         }
 
-        return Functions::apply_cushion($rate);
+        return floatval(Functions::apply_cushion($rate));
     }
 
     /**
