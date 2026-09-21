@@ -60,6 +60,119 @@ class Functions
     }
 
     /**
+     * Country a currency belongs to, as a lowercase ISO 3166 code.
+     *
+     * ISO 4217 codes are prefixed with their country code (ZWG is ZW, ZAR is
+     * ZA), which is what keeps this stable when a country replaces its
+     * currency: ZWD, ZWL and ZWG all resolve to Zimbabwe with no change here.
+     * Only the supranational currencies need spelling out, and those get the
+     * same representative country the api's own calculator uses.
+     *
+     * @since 1.1.6
+     * @param string $currency
+     * @return string
+     */
+    public static function country_code(string $currency): string
+    {
+        $currency = strtoupper($currency);
+
+        $overrides = apply_filters('zimrate-country-overrides', [
+            'EUR' => 'eu',
+            'XAF' => 'cm',
+            'XOF' => 'sn',
+            'XCD' => 'ag',
+            'XPF' => 'pf',
+            'ANG' => 'cw',
+        ]);
+
+        return $overrides[$currency] ?? strtolower(substr($currency, 0, 2));
+    }
+
+    /**
+     * Country names keyed by ISO 3166 code, from country.io.
+     *
+     * Country names change about as often as countries do, so the list is
+     * held for a month and a copy is kept for a year for when the fetch
+     * fails.
+     *
+     * @since 1.1.6
+     * @return array
+     */
+    public static function country_names(): array
+    {
+        $key = 'zimrate-country-names';
+
+        $names = get_transient($key);
+
+        if (is_array($names)) {
+            return $names;
+        }
+
+        $response = wp_remote_get(apply_filters('zimrate-country-names-url', 'https://country.io/names.json'));
+
+        if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
+            $names = json_decode(wp_remote_retrieve_body($response), true);
+
+            if (is_array($names) && !empty($names)) {
+                set_transient($key, $names, defined('MONTH_IN_SECONDS') ? MONTH_IN_SECONDS : DAY_IN_SECONDS * 30);
+                set_transient($key . '-backup', $names, defined('YEAR_IN_SECONDS') ? YEAR_IN_SECONDS : DAY_IN_SECONDS * 365);
+
+                return $names;
+            }
+        }
+
+        $backup = get_transient($key . '-backup');
+
+        return is_array($backup) ? $backup : [];
+    }
+
+    /**
+     * Country name for a currency, or its country code where none resolves.
+     *
+     * ICU is preferred where the host has intl: its names are localised to the
+     * site and kept current with the official forms.  It hands back the region
+     * code itself for one it does not know, in which case country.io fills in.
+     * Failing both, the country code stands: it needs no lookup, so it is the
+     * one answer that is always available.
+     *
+     * @since 1.1.6
+     * @param string $currency
+     * @return string
+     */
+    public static function country_name(string $currency): string
+    {
+        $region = strtoupper(self::country_code($currency));
+
+        if (class_exists('\Locale')) {
+            $name = \Locale::getDisplayRegion('und-' . $region, get_locale());
+
+            if ($name && strcasecmp($name, $region) !== 0) {
+                return $name;
+            }
+        }
+
+        $names = self::country_names();
+
+        return $names[$region] ?? $region;
+    }
+
+    /**
+     * The label a currency is shown under: "ZAR · South Africa", or just the
+     * code where the two would repeat.
+     *
+     * @since 1.1.6
+     * @param string $currency
+     * @return string
+     */
+    public static function currency_label(string $currency): string
+    {
+        $code = strtoupper($currency);
+        $name = self::country_name($currency);
+
+        return strcasecmp($name, $code) === 0 ? $code : $code . ' · ' . $name;
+    }
+
+    /**
      * Get the Zimrate GraphQL endpoint
      *
      * @since 1.1.6

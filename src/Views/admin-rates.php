@@ -71,7 +71,7 @@ $base = Functions::default_base(); ?>
                                 <?php esc_attr_e($index + 1); ?>
                             </td>
                             <td>
-                                <?php esc_html_e($rate['currency']); ?>
+                                <?php echo esc_html(Functions::currency_label($rate['currency'])); ?>
                             </td>
                             <td>
                                 <?php esc_html_e($rate['rate']); ?>

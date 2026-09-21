@@ -84,7 +84,7 @@ $rate_for = function ($to) use ($raw, $base, $cushion) {
                         <?php foreach ($bases as $code) : ?>
                             <option value="<?php echo esc_attr($code); ?>"
                                 <?php selected($code, $base); ?>>
-                                <?php echo esc_html($code); ?>
+                                <?php echo esc_html(Functions::currency_label($code)); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -108,7 +108,7 @@ $rate_for = function ($to) use ($raw, $base, $cushion) {
                         <?php foreach ($raw as $code => $value) : ?>
                             <option value="<?php echo esc_attr($code); ?>"
                                 <?php selected($code, $currency); ?>>
-                                <?php echo esc_html($code); ?>
+                                <?php echo esc_html(Functions::currency_label($code)); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -141,7 +141,7 @@ $rate_for = function ($to) use ($raw, $base, $cushion) {
                         <tbody>
                             <?php foreach ($raw as $code => $value) : ?>
                                 <tr data-zimrate-row="<?php echo esc_attr($code); ?>">
-                                    <td><?php echo esc_html($code); ?></td>
+                                    <td><?php echo esc_html(Functions::currency_label($code)); ?></td>
                                     <td data-zimrate-cell><?php echo esc_html(
                                         number_format_i18n($rate_for($code), $precision)
                                     ); ?></td>

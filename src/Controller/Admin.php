@@ -417,7 +417,7 @@ class Admin extends BaseController
         // only the codes WooCommerce does not already know need adding
         foreach (Functions::supported_currencies() as $code => $name) {
             if (!isset($currencies[$code])) {
-                $currencies[$code] = $name;
+                $currencies[$code] = Functions::country_name($code);
             }
         }
 
