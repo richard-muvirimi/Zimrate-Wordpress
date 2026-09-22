@@ -157,8 +157,38 @@ class Functions
     }
 
     /**
-     * The label a currency is shown under: "ZAR · South Africa", or just the
-     * code where the two would repeat.
+     * Name for a currency: what ICU calls it, else its country.
+     *
+     * ICU's currency table is thinner than its region table (ZWG only reached
+     * it in 2024, and not in every locale), so a currency it has no name for
+     * falls through to the country chain in country_name(), which always
+     * answers.
+     *
+     * @since 1.1.6
+     * @param string $currency
+     * @return string
+     */
+    public static function currency_name(string $currency): string
+    {
+        $code = strtoupper($currency);
+
+        if (class_exists('\ResourceBundle')) {
+            $bundle = \ResourceBundle::create(get_locale(), 'ICUDATA-curr');
+            $entry = $bundle ? $bundle['Currencies'] : null;
+            $entry = $entry ? $entry[$code] : null;
+            $name = $entry ? $entry[1] : null;
+
+            if (is_string($name) && $name !== '' && strcasecmp($name, $code) !== 0) {
+                return $name;
+            }
+        }
+
+        return self::country_name($currency);
+    }
+
+    /**
+     * The label a currency is shown under: "ZWG · Zimbabwean Gold", or just
+     * the code where the two would repeat.
      *
      * @since 1.1.6
      * @param string $currency
@@ -167,7 +197,7 @@ class Functions
     public static function currency_label(string $currency): string
     {
         $code = strtoupper($currency);
-        $name = self::country_name($currency);
+        $name = self::currency_name($currency);
 
         return strcasecmp($name, $code) === 0 ? $code : $code . ' · ' . $name;
     }
