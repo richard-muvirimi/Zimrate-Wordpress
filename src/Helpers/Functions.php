@@ -460,10 +460,10 @@ class Functions
      * @param string $base
      * @param int $precision
      * @param bool $cushion
-     * @param array $currencies codes to show, none for every currency
+     * @param array|null $currencies codes to show, null for every currency
      * @return array
      */
-    public static function rates_table(string $base, int $precision, bool $cushion, array $currencies = array()): array
+    public static function rates_table(string $base, int $precision, bool $cushion, ?array $currencies = null): array
     {
         $usd = self::get_usd_rates();
 
@@ -472,11 +472,13 @@ class Functions
             $base = 'USD';
         }
 
-        $currencies = array_map('strtoupper', $currencies);
+        if ($currencies !== null) {
+            $currencies = array_map('strtoupper', $currencies);
+        }
 
         $rows = array();
         foreach ($usd as $code => $rate) {
-            if ($currencies && !in_array($code, $currencies, true)) {
+            if ($currencies !== null && !in_array($code, $currencies, true)) {
                 continue;
             }
 
@@ -511,7 +513,8 @@ class Functions
      * request, the table is rendered here when asked for.
      *
      * @since 1.1.6
-     * @param array $args base, currency, amount, precision, cushion, table, open
+     * @param array $args base, currency, amount, precision, cushion, table, open,
+     *                    currencies (codes to offer, null for every currency)
      * @return array
      */
     public static function calculator(array $args): array
@@ -524,9 +527,14 @@ class Functions
             'cushion' => true,
             'table' => false,
             'open' => false,
+            'currencies' => null,
         ));
 
         $usd = self::get_usd_rates();
+
+        if ($args['currencies'] !== null) {
+            $usd = array_intersect_key($usd, array_flip(array_map('strtoupper', $args['currencies'])));
+        }
 
         $currencies = array();
         foreach ($usd as $code => $rate) {
@@ -557,7 +565,7 @@ class Functions
             'table' => $args['table']
                 ? Template::get_template(
                     self::get_plugin_slug('-rates-table'),
-                    self::rates_table($base, $precision, (bool) $args['cushion']),
+                    self::rates_table($base, $precision, (bool) $args['cushion'], $args['currencies']),
                     'rates-table.php'
                 )
                 : '',

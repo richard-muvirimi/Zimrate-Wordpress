@@ -55,10 +55,13 @@ export const CurrencySelect = ({ label, value, bases = false, onChange }: Curren
 };
 
 interface CurrencyPickerProps {
-    /** the codes to show, none for every currency */
+    /** the codes to show */
     value: string[];
     onChange: (value: string[]) => void;
 }
+
+/** Every currency code, for a block that starts with all of them ticked */
+export const allCurrencies = () => Object.keys(data.currencies);
 
 /**
  * Tick the currencies a table shows, alphabetical as php lists them

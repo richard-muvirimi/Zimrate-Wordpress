@@ -184,6 +184,13 @@ class Site extends BaseController
      */
     public function render_calculator_block(array $attributes): string
     {
+        $currencies = (array) ($attributes['currencies'] ?? array());
+
+        // nothing ticked is nothing shown, not the "no rates" notice
+        if (!$currencies) {
+            return '';
+        }
+
         return sprintf(
             '<div %s>%s</div>',
             get_block_wrapper_attributes(),
@@ -195,6 +202,7 @@ class Site extends BaseController
                     'amount' => $attributes['amount'],
                     'precision' => $attributes['precision'],
                     'cushion' => !empty($attributes['cushion']),
+                    'currencies' => $currencies,
                 )),
                 'calculator.php'
             )
@@ -210,6 +218,13 @@ class Site extends BaseController
      */
     public function render_rates_table_block(array $attributes): string
     {
+        $currencies = (array) ($attributes['currencies'] ?? array());
+
+        // nothing ticked is nothing shown, not the "no rates" notice
+        if (!$currencies) {
+            return '';
+        }
+
         return sprintf(
             '<div %s>%s</div>',
             get_block_wrapper_attributes(),
@@ -219,7 +234,7 @@ class Site extends BaseController
                     $attributes['base'] ?: Functions::default_base(),
                     intval($attributes['precision']),
                     !empty($attributes['cushion']),
-                    (array) ($attributes['currencies'] ?? array())
+                    $currencies
                 ),
                 'rates-table.php'
             )

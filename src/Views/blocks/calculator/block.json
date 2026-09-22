@@ -11,6 +11,7 @@
     "attributes": {
         "base": { "type": "string", "default": "" },
         "currency": { "type": "string", "default": "" },
+        "currencies": { "type": "array", "items": { "type": "string" }, "default": [] },
         "amount": { "type": "number", "default": 1 },
         "precision": { "type": "integer", "default": 2 },
         "cushion": { "type": "boolean", "default": true }
