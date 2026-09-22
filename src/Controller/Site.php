@@ -218,7 +218,8 @@ class Site extends BaseController
                 Functions::rates_table(
                     $attributes['base'] ?: Functions::default_base(),
                     intval($attributes['precision']),
-                    !empty($attributes['cushion'])
+                    !empty($attributes['cushion']),
+                    (array) ($attributes['currencies'] ?? array())
                 ),
                 'rates-table.php'
             )

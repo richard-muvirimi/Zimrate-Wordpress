@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
-import { RangeControl, SelectControl, ToggleControl } from '@wordpress/components';
+import { CheckboxControl, RangeControl, SelectControl, ToggleControl } from '@wordpress/components';
 
 /**
  * Register a block from its block.json, php already declared it server side so
@@ -53,6 +53,31 @@ export const CurrencySelect = ({ label, value, bases = false, onChange }: Curren
         />
     );
 };
+
+interface CurrencyPickerProps {
+    /** the codes to show, none for every currency */
+    value: string[];
+    onChange: (value: string[]) => void;
+}
+
+/**
+ * Tick the currencies a table shows, alphabetical as php lists them
+ */
+export const CurrencyPicker = ({ value, onChange }: CurrencyPickerProps) => (
+    <>
+        {Object.entries(data.currencies).map(([code, label]) => (
+            <CheckboxControl
+                __nextHasNoMarginBottom
+                key={code}
+                label={label}
+                checked={value.includes(code)}
+                onChange={(checked) =>
+                    onChange(checked ? [...value, code] : value.filter((item) => item !== code))
+                }
+            />
+        ))}
+    </>
+);
 
 interface PrecisionControlProps {
     value: number;

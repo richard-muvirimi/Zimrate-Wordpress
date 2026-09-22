@@ -10,6 +10,7 @@
     "textdomain": "zimrate",
     "attributes": {
         "base": { "type": "string", "default": "" },
+        "currencies": { "type": "array", "items": { "type": "string" }, "default": [] },
         "precision": { "type": "integer", "default": 2 },
         "cushion": { "type": "boolean", "default": true }
     },

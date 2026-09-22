@@ -460,9 +460,10 @@ class Functions
      * @param string $base
      * @param int $precision
      * @param bool $cushion
+     * @param array $currencies codes to show, none for every currency
      * @return array
      */
-    public static function rates_table(string $base, int $precision, bool $cushion): array
+    public static function rates_table(string $base, int $precision, bool $cushion, array $currencies = array()): array
     {
         $usd = self::get_usd_rates();
 
@@ -471,8 +472,14 @@ class Functions
             $base = 'USD';
         }
 
+        $currencies = array_map('strtoupper', $currencies);
+
         $rows = array();
         foreach ($usd as $code => $rate) {
+            if ($currencies && !in_array($code, $currencies, true)) {
+                continue;
+            }
+
             if ($code === $base) {
                 $rate = '1';
             } elseif ($base !== 'USD') {
