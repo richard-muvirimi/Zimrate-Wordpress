@@ -165,17 +165,7 @@ class Admin extends BaseController
     {
         echo Template::get_template(
             Functions::get_plugin_slug('-calculator'),
-            array(
-                'args' => array(
-                    'base' => Functions::default_base(),
-                    'currency' => Functions::default_currency(),
-                    'amount' => 1,
-                    'precision' => 2,
-                    'cushion' => 'yes',
-                    'table' => 'yes',
-                    'open' => 'no',
-                ),
-            ),
+            Functions::calculator(array('table' => true)),
             'calculator.php'
         );
     }
@@ -417,7 +407,7 @@ class Admin extends BaseController
         // only the codes WooCommerce does not already know need adding
         foreach (Functions::supported_currencies() as $code => $name) {
             if (!isset($currencies[$code])) {
-                $currencies[$code] = $name;
+                $currencies[$code] = Functions::currency_name($code);
             }
         }
 

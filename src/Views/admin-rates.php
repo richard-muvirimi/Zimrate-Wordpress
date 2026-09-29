@@ -16,7 +16,7 @@
 use RichardMuvirimi\Zimrate\Helpers\Functions;
 
 $rates = Functions::get_rates();
-$base = Functions::default_base(); ?>
+$base = 'USD'; ?>
 
 <h2>
     <?php _e('Rates', Functions::get_plugin_slug()); ?>
@@ -59,14 +59,19 @@ $base = Functions::default_base(); ?>
 
                 $supported = array_keys(Functions::supported_currencies());
 
-                foreach ($rates[$base] as $index => $rate) :
+                $rows = $rates[$base];
+                usort($rows, function ($a, $b) {
+                    return strcmp($a['currency'], $b['currency']);
+                });
+
+                foreach ($rows as $index => $rate) :
                     if (in_array($rate['currency'], $supported)) : ?>
                         <tr>
                             <td>
                                 <?php esc_attr_e($index + 1); ?>
                             </td>
                             <td>
-                                <?php esc_html_e($rate['currency']); ?>
+                                <?php echo esc_html(Functions::currency_label($rate['currency'])); ?>
                             </td>
                             <td>
                                 <?php esc_html_e($rate['rate']); ?>

@@ -1,0 +1,29 @@
+{
+    "name": "zimrate",
+    "version": "1.1.5",
+    "description": "Live exchange rates from ZimRate for WordPress.",
+    "private": true,
+    "scripts": {
+        "build": "wp-scripts build --webpack-src-dir=ui --node-env development --progress",
+        "dist": "wp-scripts build --webpack-src-dir=ui --node-env production",
+        "start": "wp-scripts start --webpack-src-dir=ui",
+        "types": "tsc --noEmit",
+        "packages-update": "wp-scripts packages-update"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "devDependencies": {
+        "@types/react": "^18.3.18",
+        "@types/react-dom": "^18.3.5",
+        "@types/wordpress__blocks": "^15.10.2",
+        "@wordpress/block-editor": "^14.0.0",
+        "@wordpress/blocks": "^14.0.0",
+        "@wordpress/components": "^29.0.0",
+        "@wordpress/element": "^6.0.0",
+        "@wordpress/i18n": "^5.0.0",
+        "@wordpress/scripts": "^30.7.0",
+        "@wordpress/server-side-render": "^5.0.0",
+        "typescript": "^5.7.2"
+    }
+}

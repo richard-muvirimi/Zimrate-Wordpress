@@ -89,7 +89,6 @@
     "require": {
         "php": ">=7.3",
         "ext-json": "*",
-        "br33f/php-ga4-mp": "^0.1.4",
         "symfony/polyfill-php74": "^1.33",
         "symfony/polyfill-php80": "^1.33",
         "symfony/polyfill-php81": "^1.33",
@@ -98,6 +97,9 @@
         "symfony/polyfill-php84": "^1.33",
         "symfony/polyfill-php85": "^1.33",
         "yidas/client-ip": "^1.0"
+    },
+    "suggest": {
+        "ext-bcmath": "Decimal arithmetic on rates, matching the api's own figures digit for digit"
     },
     "require-dev": {
         "ext-zip": "*",

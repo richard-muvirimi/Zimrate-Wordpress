@@ -54,7 +54,7 @@ class Woocs extends BasePluginIntegration
      */
     public function get_tested_version(): string
     {
-        return '1.4.3.1';
+        return '1.5.4';
     }
 
     /**

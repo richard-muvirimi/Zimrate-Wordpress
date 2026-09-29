@@ -74,11 +74,11 @@ class ApiSchemaTest extends TestCase
     }
 
     /**
-     * Test the rate query still takes the arguments the plugin binds
+     * Test the rate query still takes the argument the plugin binds
      *
      * @return void
      */
-    public function testRateQueryAcceptsCurrencyAndPreferArguments(): void
+    public function testRateQueryAcceptsPreferArgument(): void
     {
         $schema = $this->getSchema();
 
@@ -96,63 +96,9 @@ class ApiSchemaTest extends TestCase
         }
 
         self::assertSame(
-            'Currency',
-            $types['currency'] ?? '',
-            'rate(currency:) no longer takes a Currency, Functions::get_rates() binds it as one'
-        );
-        self::assertSame(
             'Prefer',
             $types['prefer'] ?? '',
             'rate(prefer:) no longer takes a Prefer, Functions::get_rates() binds it as one'
-        );
-        self::assertSame(
-            'Base',
-            $types['base'] ?? '',
-            'rate(base:) no longer takes a Base, Functions::get_rates() binds it as one'
-        );
-    }
-
-    /**
-     * Test the base enum still populates the base dropdown
-     *
-     * @return void
-     */
-    public function testBaseEnumIsPopulated(): void
-    {
-        $schema = $this->getSchema();
-
-        $bases = array_column($schema['base']['enumValues'], 'name');
-
-        self::assertNotEmpty(
-            $bases,
-            'The Base enum is empty, Functions::supported_bases() builds the base dropdown from it'
-        );
-        self::assertContains(
-            Functions::default_base(),
-            $bases,
-            'Functions::default_base() is no longer a base the api accepts'
-        );
-    }
-
-    /**
-     * Test the currency enum still populates the settings dropdown
-     *
-     * @return void
-     */
-    public function testCurrencyEnumIsPopulated(): void
-    {
-        $schema = $this->getSchema();
-
-        $currencies = array_column($schema['currency']['enumValues'], 'name');
-
-        self::assertNotEmpty(
-            $currencies,
-            'The Currency enum is empty, Functions::supported_currencies() builds the settings dropdown from it'
-        );
-        self::assertContains(
-            Functions::default_currency(),
-            $currencies,
-            'Functions::default_currency() is no longer a currency the api accepts'
         );
     }
 
@@ -218,8 +164,6 @@ class ApiSchemaTest extends TestCase
             ' fields { name args { name type { kind name ofType { kind name } } } }' .
             ' }' .
             ' rate: __type(name: "Rate") { fields { name } }' .
-            ' base: __type(name: "Base") { enumValues { name } }' .
-            ' currency: __type(name: "Currency") { enumValues { name } }' .
             ' prefer: __type(name: "Prefer") { enumValues { name } }' .
             ' }';
 

@@ -7,6 +7,7 @@ zimrate-wordpress.code-workspace
 # Build files
 /build/
 /dist/
+/src/Views/js/dist/
 *.phar
 
 # IDE
@@ -18,6 +19,11 @@ zimrate-wordpress.code-workspace
 # OS
 .DS_Store
 Thumbs.db
+
+# php-actions/composer writes these into the workspace on every run, and
+# DOCKER_ENV carries the job's token
+docker_tag
+DOCKER_ENV
 
 # Testing
 .phpunit.result.cache

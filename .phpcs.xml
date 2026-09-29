@@ -7,6 +7,8 @@
 <arg name="extensions" value="php"/>
 
 <exclude-pattern>*/vendor/*</exclude-pattern>
+<exclude-pattern>*/node_modules/*</exclude-pattern>
+<exclude-pattern>*/src/Views/js/dist/*</exclude-pattern>
 <exclude-pattern>*/tests/src/*</exclude-pattern>
 <exclude-pattern>*/_old/*</exclude-pattern>
 

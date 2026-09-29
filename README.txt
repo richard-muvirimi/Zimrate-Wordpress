@@ -3,7 +3,7 @@ Contributors: tygalive
 Donate link: https://tyganeutronics.com
 Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 Requires at least: 4.0.0
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.3
 Stable tag: 1.1.5
 License: GPLv2 or later
@@ -28,6 +28,8 @@ This plugin directly supports these plugins:
 All Zimbabwean rates are obtained from [ZimRate](http://zimrate.tyganeutronics.com "Zimrate") and caching is provided in plugin to avoid overloading the server though you are free to disable caching.
 
 This plugin also provides a short code which you can use to display latest exchange rates without updating your posts to ever changing exchange rates.
+
+For the block editor there are three blocks: an exchange rate (the shortcode's equivalent), a currency calculator, and a table of every rate against a base of your choosing. The same calculator and table sit on the WordPress dashboard.
 
 Note: This plugin is not directly a currency switcher (as that would be redundant considering the number of options on wordpress.org).
 

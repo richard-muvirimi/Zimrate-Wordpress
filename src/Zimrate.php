@@ -193,6 +193,8 @@ class Zimrate
         $controller = new Site();
 
         $this->add_shortcode(Functions::get_shortcode(), $controller, 'currency_shortcode');
+        $this->add_action('init', $controller, 'register_blocks');
+        $this->add_action('enqueue_block_editor_assets', $controller, 'localize_block_editor');
     }
 
     /**
