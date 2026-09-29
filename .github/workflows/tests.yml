@@ -42,6 +42,8 @@ jobs:
       with:
         dev: yes
         php_version: "7.4"
+        # the integration support tests read plugin zips from wordpress.org
+        php_extensions: zip
         version: latest
         command: update
         
