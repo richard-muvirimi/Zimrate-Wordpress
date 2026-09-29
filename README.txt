@@ -5,7 +5,7 @@ Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 Requires at least: 4.0.0
 Tested up to: 7.1
 Requires PHP: 7.3
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,6 +95,15 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 
 == Changelog ==
 
+= 1.1.6 =
+* Moved to the ZimRate GraphQL api, with every rate fetched in one request
+* Currencies are no longer fixed to Zimbabwe, whatever the api covers is offered
+* Added exchange rate, calculator and rates table blocks for the editor
+* Added a calculator and rates table to the WordPress dashboard
+* Rates are worked out in decimal where bcmath is available, matching the api
+* Currencies are labelled by name, from the site's own locale
+* Removed the rate source, currency and base settings, these are now per use
+
 = 1.1.5 =
 * Minor bug fixes
 
@@ -116,6 +125,9 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.1.6 =
+The rate source, currency and base settings are gone, each is now chosen where it is used. Rates now come from the ZimRate GraphQL api.
 
 = 1.1.1 =
 add WOOCS - WooCommerce Currency Switcher support
