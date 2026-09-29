@@ -70,6 +70,13 @@ $files = [
         'replacement' => '${1}' . $newVersion . '${2}',
         'description' => 'composer.json version'
     ],
+    // package.json
+    [
+        'file' => findFile($rootDir, 'package.json'),
+        'pattern' => '/("version"\s*:\s*")\d+\.\d+\.\d+(",)/',
+        'replacement' => '${1}' . $newVersion . '${2}',
+        'description' => 'package.json version'
+    ],
     // readme.txt - Stable tag
     [
         'file' => findFile($rootDir, 'readme.txt'),
