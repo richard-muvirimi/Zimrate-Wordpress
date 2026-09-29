@@ -3,7 +3,7 @@ Contributors: tygalive
 Donate link: https://tyganeutronics.com
 Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 Requires at least: 4.0.0
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.3
 Stable tag: 1.1.5
 License: GPLv2 or later

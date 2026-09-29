@@ -6,7 +6,7 @@
 - **_Donate link:_** https://buymeacoffee.com/fpjyrXk
 - **_Tags:_** zimbabwe, zimrate, currency, rate, tyganeutronics
 - **_Requires at least:_** 4.0.0
-- **_Tested up to:_** 6.9
+- **_Tested up to:_** 7.1
 - **_Requires PHP:_** 7.3
 - **_Stable tag:_** 1.1.5
 - **_License:_** GPLv2 or later

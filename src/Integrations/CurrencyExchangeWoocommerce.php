@@ -55,7 +55,7 @@ class CurrencyExchangeWoocommerce extends BasePluginIntegration
      */
     public function get_tested_version(): string
     {
-        return '3.6.2.1';
+        return '3.6.4';
     }
 
     /**

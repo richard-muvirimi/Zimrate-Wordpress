@@ -53,7 +53,7 @@ class CurrencySwitcherWoocommerce extends BasePluginIntegration
      */
     public function get_tested_version(): string
     {
-        return '2.16.4';
+        return '2.16.7';
     }
 
     /**

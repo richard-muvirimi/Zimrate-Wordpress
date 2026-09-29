@@ -57,7 +57,7 @@ class WooMultiCurrency extends BasePluginIntegration
      */
     public function get_tested_version(): string
     {
-        return '2.2.9';
+        return '2.2.17';
     }
 
     /**
