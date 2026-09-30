@@ -97,13 +97,33 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 
 ### Screenshots
 
-#### 1. Zimrate Dashboard
+#### 1. The ZimRate calculator on your WordPress dashboard
 
-![The rates table on the ZimRate dashboard](.github/screenshots/screenshot-1.png)
+![The ZimRate calculator on your WordPress dashboard](.github/screenshots/screenshot-1.png)
 
-#### 2. Zimrate Options Screen
+#### 2. The blocks in a post, a rates table, a rate and a calculator
 
-![The options screen](.github/screenshots/screenshot-2.png)
+![The blocks in a post, a rates table, a rate and a calculator](.github/screenshots/screenshot-2.png)
+
+#### 3. The Currency Calculator block, choosing the currencies it offers
+
+![The Currency Calculator block, choosing the currencies it offers](.github/screenshots/screenshot-3.png)
+
+#### 4. The Exchange Rates Table block, choosing the currencies it shows
+
+![The Exchange Rates Table block, choosing the currencies it shows](.github/screenshots/screenshot-4.png)
+
+#### 5. The Exchange Rate block, the short code with a sidebar
+
+![The Exchange Rate block, the short code with a sidebar](.github/screenshots/screenshot-5.png)
+
+#### 6. Every rate ZimRate covers, on the plugins own screen
+
+![Every rate ZimRate covers, on the plugins own screen](.github/screenshots/screenshot-6.png)
+
+#### 7. Supported plugins and the [zimrate] short code
+
+![Supported plugins and the [zimrate] short code](.github/screenshots/screenshot-7.png)
 
 ### Changelog
 

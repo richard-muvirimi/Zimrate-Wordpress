@@ -94,8 +94,13 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 
 == Screenshots ==
 
-1. The rates table on the ZimRate dashboard
-2. The options screen, the rate to prefer, how long to cache and the cushion
+1. The ZimRate calculator on your WordPress dashboard
+2. The blocks in a post, a rates table, a rate and a calculator
+3. The Currency Calculator block, choosing the currencies it offers
+4. The Exchange Rates Table block, choosing the currencies it shows
+5. The Exchange Rate block, the short code with a sidebar
+6. Every rate ZimRate covers, on the plugins own screen
+7. Supported plugins and the [zimrate] short code
 
 == Changelog ==
 

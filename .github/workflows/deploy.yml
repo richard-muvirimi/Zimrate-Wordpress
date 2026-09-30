@@ -89,3 +89,5 @@ jobs:
         svn-password: ${{ secrets.SVN_PASSWORD }}
         plugin-repository: zimrate
         working-directory: build
+        # banner, icons and screenshots, committed to svn assets/
+        assets-directory: .github/screenshots
