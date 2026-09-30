@@ -83,7 +83,7 @@ jobs:
     - name: WordPress Plugin Deploy
       if: steps.check_tag.outputs.exists == 'false'
       id: deploy
-      uses: richard-muvirimi/deploy-wordpress-plugin@development
+      uses: richard-muvirimi/deploy-wordpress-plugin@1.1.1
       with:
         svn-username: ${{ secrets.SVN_USERNAME }}
         svn-password: ${{ secrets.SVN_PASSWORD }}
