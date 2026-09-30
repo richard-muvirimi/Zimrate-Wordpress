@@ -9,11 +9,11 @@ Stable tag: 1.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-All Zimbabwean exchange rates from multiple sites in one plugin. No need to scrounge the internet for the current days rate.
+Exchange rates as they stand on the ground in Zimbabwe, for every currency. No need to scrounge the internet for the current days rate.
 
 == Description ==
 
-Add automatic Zimbabwean currency conversion to your site. 
+Add automatic currency conversion to your site, at the rates on the ground rather than the official ones. 
 This plugin modifies the result from listed plugins api calls before they are submitted to plugin.
 
 This plugin directly supports these plugins:
@@ -25,7 +25,7 @@ This plugin directly supports these plugins:
 *   [Currency Exchange for WooCommerce](https://wordpress.org/plugins/currency-exchange-for-woocommerce "Currency Exchange for WooCommerce")
 *   [FOX – Currency Switcher Professional for WooCommerce](https://wordpress.org/plugins/woocommerce-currency-switcher "FOX – Currency Switcher Professional for WooCommerce")
 
-All Zimbabwean rates are obtained from [ZimRate](http://zimrate.tyganeutronics.com "Zimrate") and caching is provided in plugin to avoid overloading the server though you are free to disable caching.
+All rates are obtained from [ZimRate](http://zimrate.tyganeutronics.com "Zimrate") in one request, whatever currencies you end up showing, and are cached for a refresh interval of your choosing to avoid overloading the server.
 
 This plugin also provides a short code which you can use to display latest exchange rates without updating your posts to ever changing exchange rates.
 
@@ -74,6 +74,10 @@ In the search field type “ZimRate”, then click “Search Plugins.” Once yo
 
 A currency injector for wordpress plugins. When said plugin requests for latest currency rates using wordpress' functions, this plugin modifies the result before it is submitted to the requesting plugin.
 
+= Which currencies can i use? =
+
+Whatever [ZimRate](http://zimrate.tyganeutronics.com "Zimrate") covers. They are read from the api rather than kept in the plugin, so a currency added there needs no update here.
+
 = Where's my favourate plugin? =
 
 Though have tried to cover as many plugins as possible, there is a limitation on the plugins that can be directly supported.
@@ -90,8 +94,13 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 
 == Screenshots ==
 
-1. ZimRate Dashboard - View and manage exchange rates
-2. ZimRate Options Screen - Configure plugin settings
+1. The ZimRate calculator on your WordPress dashboard
+2. The blocks in a post, a rates table, a rate and a calculator
+3. The Currency Calculator block, choosing the currencies it offers
+4. The Exchange Rates Table block, choosing the currencies it shows
+5. The Exchange Rate block, the short code with a sidebar
+6. Every rate ZimRate covers, on the plugins own screen
+7. Supported plugins and the [zimrate] short code
 
 == Changelog ==
 
