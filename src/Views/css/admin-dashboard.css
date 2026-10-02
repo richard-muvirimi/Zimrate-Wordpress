@@ -28,6 +28,11 @@ div.zimrate td {
   padding: 8px;
 }
 
+div.zimrate-rates th:nth-child(2),
+div.zimrate-rates td:nth-child(2) {
+  text-align: left;
+}
+
 div.zimrate tr:nth-child(even) {
   background-color: white;
 }
@@ -56,4 +61,10 @@ div.zimrate-shortcode {
 ul.zimrate-shortcode-list {
   padding: 0 20px;
   list-style: circle;
+}
+
+.zimrate-flag {
+  margin-right: .4em;
+  border-radius: 2px;
+  vertical-align: middle;
 }

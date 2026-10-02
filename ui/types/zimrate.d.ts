@@ -6,6 +6,8 @@ interface ZimrateBlocksData {
     currencies: Record<string, string>;
     /** USD first, then every currency */
     bases: Record<string, string>;
+    /** currency code => flag url, null where there is none */
+    flags: Record<string, string | null>;
     defaults: {
         base: string;
         currency: string;

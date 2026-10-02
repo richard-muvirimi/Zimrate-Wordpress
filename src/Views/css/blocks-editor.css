@@ -1,0 +1,33 @@
+/**
+ * Zimrate block sidebar styles
+ *
+ * Flags ahead of the currency names. Each element carries its own flag as
+ * --zimrate-flag, see ui/blocks/controls.tsx, a currency without one keeps
+ * the space so the names still line up.
+ *
+ * @since 1.1.8
+ */
+
+/* the wrappers take the spacing the inspector gives the controls they hold */
+.block-editor-block-inspector :where(.zimrate-flagged-select, .zimrate-flagged-check):where(:not(:last-child)) {
+    margin-bottom: 16px;
+}
+
+.components-custom-select-control__item.zimrate-flagged,
+.zimrate-flagged-select button {
+    padding-inline-start: 40px;
+    background-image: var(--zimrate-flag, none);
+    background-position: 12px center;
+    background-repeat: no-repeat;
+    background-size: 20px 15px;
+}
+
+.zimrate-flagged-check .components-checkbox-control__label::before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 15px;
+    margin-right: .4em;
+    vertical-align: middle;
+    background: var(--zimrate-flag, none) center / cover no-repeat;
+}

@@ -203,6 +203,24 @@ class Functions
     }
 
     /**
+     * Flag for a currency's country, or null where flag-icons has none, as
+     * for XAU and other codes no country owns.
+     *
+     * The flags are copied out of flag-icons at build time, see
+     * webpack.config.js.
+     *
+     * @since 1.1.8
+     * @param string $currency
+     * @return string|null
+     */
+    public static function flag_url(string $currency): ?string
+    {
+        $file = 'flags/' . self::country_code($currency) . '.svg';
+
+        return file_exists(Template::get_image_path($file)) ? Template::get_image_url($file) : null;
+    }
+
+    /**
      * Get the Zimrate GraphQL endpoint
      *
      * @since 1.1.6
@@ -524,6 +542,7 @@ class Functions
 
             $rows[$code] = array(
                 'label' => self::currency_label($code),
+                'flag' => self::flag_url($code),
                 'rate' => Arithmetic::round($rate, $precision),
             );
         }

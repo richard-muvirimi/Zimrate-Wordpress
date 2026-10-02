@@ -22,6 +22,7 @@
         "spacing": { "margin": true, "padding": true }
     },
     "editorScript": "zimrate-blocks",
+    "editorStyle": "zimrate-blocks",
     "style": "zimrate-calculator",
     "viewScript": "zimrate-calculator"
 }

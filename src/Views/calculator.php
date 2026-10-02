@@ -62,7 +62,7 @@ defined('ABSPATH') || exit();
             </label>
 
             <button type="button"
-                    class="zimrate-calculator-swap"
+                    class="zimrate-calculator-swap wp-element-button"
                     data-zimrate-swap
                     aria-label="<?php esc_attr_e('Swap direction', 'zimrate'); ?>">&#8646;</button>
 

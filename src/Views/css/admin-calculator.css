@@ -38,6 +38,11 @@
     box-sizing: border-box;
 }
 
+/* on the front end the fields take the theme's typography, not the browser's */
+.wp-block-zimrate-calculator :where(input, select) {
+    font: inherit;
+}
+
 .zimrate-calculator-swap {
     flex: 0 0 auto;
     padding: .35rem .6rem;
@@ -82,6 +87,12 @@
 
 .zimrate-calculator-scroll tbody tr {
     cursor: pointer;
+}
+
+.zimrate-flag {
+    margin-right: .4em;
+    border-radius: 2px;
+    vertical-align: middle;
 }
 
 .zimrate-calculator-info {

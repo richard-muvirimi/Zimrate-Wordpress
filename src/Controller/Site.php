@@ -98,6 +98,12 @@ class Site extends BaseController
             true
         );
         wp_set_script_translations(Functions::get_plugin_slug('-blocks'), Functions::get_plugin_slug());
+        wp_register_style(
+            Functions::get_plugin_slug('-blocks'),
+            Template::get_style_url('blocks-editor.css'),
+            array(),
+            Functions::get_plugin_version()
+        );
 
         // the calculator and table share the dashboard widget's assets
         wp_register_style(
@@ -135,8 +141,10 @@ class Site extends BaseController
     public function localize_block_editor(): void
     {
         $currencies = array();
+        $flags = array('USD' => Functions::flag_url('USD'));
         foreach (Functions::supported_currencies() as $code) {
             $currencies[$code] = Functions::currency_label($code);
+            $flags[$code] = Functions::flag_url($code);
         }
 
         wp_localize_script(
@@ -145,6 +153,7 @@ class Site extends BaseController
             array(
                 'currencies' => $currencies,
                 'bases' => array('USD' => Functions::currency_label('USD')) + $currencies,
+                'flags' => $flags,
                 'defaults' => array(
                     'base' => Functions::default_base(),
                     'currency' => Functions::default_currency(),
