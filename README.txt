@@ -5,7 +5,7 @@ Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 Requires at least: 4.0.0
 Tested up to: 7.1
 Requires PHP: 7.3
-Stable tag: 1.1.7
+Stable tag: 1.1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,12 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 7. Supported plugins and the [zimrate] short code
 
 == Changelog ==
+
+= 1.1.8 =
+* Currency flags beside each currency in the rates tables, on the dashboard and in the blocks
+* Flags in the block settings too, on the currency dropdowns and the currencies to offer
+* The calculator block takes the theme's typography and button style
+* Currencies are left aligned on the rates screen
 
 = 1.1.7 =
 * Rewrote the description for what the plugin does now, rates on the ground for every currency it covers

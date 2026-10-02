@@ -8,7 +8,7 @@
 - **_Requires at least:_** 4.0.0
 - **_Tested up to:_** 7.1
 - **_Requires PHP:_** 7.3
-- **_Stable tag:_** 1.1.7
+- **_Stable tag:_** 1.1.8
 - **_License:_** GPLv2 or later
 - **_License URI:_** http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -126,6 +126,13 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 ![Supported plugins and the [zimrate] short code](.github/screenshots/screenshot-7.png)
 
 ### Changelog
+
+##### 1.1.8
+
+- Currency flags beside each currency in the rates tables, on the dashboard and in the blocks
+- Flags in the block settings too, on the currency dropdowns and the currencies to offer
+- The calculator block takes the theme's typography and button style
+- Currencies are left aligned on the rates screen
 
 ##### 1.1.7
 
