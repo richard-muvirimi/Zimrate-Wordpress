@@ -8,7 +8,7 @@
 - **_Requires at least:_** 4.0.0
 - **_Tested up to:_** 7.1
 - **_Requires PHP:_** 7.3
-- **_Stable tag:_** 1.1.6
+- **_Stable tag:_** 1.1.7
 - **_License:_** GPLv2 or later
 - **_License URI:_** http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -126,6 +126,12 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 ![Supported plugins and the [zimrate] short code](.github/screenshots/screenshot-7.png)
 
 ### Changelog
+
+##### 1.1.7
+
+- Rewrote the description for what the plugin does now, rates on the ground for every currency it covers
+- New screenshots for the blocks, the dashboard calculator and the rates screen
+- A new banner, and the plugin assets are updated with each release from now on
 
 ##### 1.1.6
 

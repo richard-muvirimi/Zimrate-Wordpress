@@ -5,7 +5,7 @@ Tags: zimbabwe, zimrate, currency, rate, tyganeutronics
 Requires at least: 4.0.0
 Tested up to: 7.1
 Requires PHP: 7.3
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,11 @@ Though would have wanted to supported Easy Digital Downloads, could not get hold
 7. Supported plugins and the [zimrate] short code
 
 == Changelog ==
+
+= 1.1.7 =
+* Rewrote the description for what the plugin does now, rates on the ground for every currency it covers
+* New screenshots for the blocks, the dashboard calculator and the rates screen
+* A new banner, and the plugin assets are updated with each release from now on
 
 = 1.1.6 =
 * Moved to the ZimRate GraphQL api, with every rate fetched in one request
