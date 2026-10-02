@@ -84,6 +84,12 @@
     cursor: pointer;
 }
 
+.zimrate-flag {
+    margin-right: .4em;
+    border-radius: 2px;
+    vertical-align: middle;
+}
+
 .zimrate-calculator-info {
     margin: .5rem 0 0;
     font-size: .85em;

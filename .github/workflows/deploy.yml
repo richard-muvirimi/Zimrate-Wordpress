@@ -78,7 +78,7 @@ jobs:
       if: steps.check_tag.outputs.exists == 'false'
       run: |
         mkdir build
-        rsync -rvt --delete --include 'vendor' --include 'src/Views/js/dist' --exclude-from='.gitignore' --exclude '.git*' --exclude 'build' --exclude 'ui' --exclude 'node_modules' --exclude 'tests' --exclude 'package.json' --exclude 'package-lock.json' --exclude 'tsconfig.json' --exclude 'webpack.config.js' --exclude 'composer.json' --exclude 'composer.lock' --exclude 'phpunit.xml' --exclude '.phpcs.xml' --exclude 'docker-compose.yml' --exclude 'bump-version.php' --exclude '*.code-workspace' ./ build/
+        rsync -rvt --delete --include 'vendor' --include 'src/Views/js/dist' --include 'src/Views/img/flags' --exclude-from='.gitignore' --exclude '.git*' --exclude 'build' --exclude 'ui' --exclude 'node_modules' --exclude 'tests' --exclude 'package.json' --exclude 'package-lock.json' --exclude 'tsconfig.json' --exclude 'webpack.config.js' --exclude 'composer.json' --exclude 'composer.lock' --exclude 'phpunit.xml' --exclude '.phpcs.xml' --exclude 'docker-compose.yml' --exclude 'bump-version.php' --exclude '*.code-workspace' ./ build/
       
     - name: WordPress Plugin Deploy
       if: steps.check_tag.outputs.exists == 'false'

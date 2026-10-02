@@ -71,6 +71,10 @@ $base = 'USD'; ?>
                                 <?php esc_attr_e($index + 1); ?>
                             </td>
                             <td>
+                                <?php $flag = Functions::flag_url($rate['currency']); ?>
+                                <?php if ($flag) : ?>
+                                    <img class="zimrate-flag" src="<?php echo esc_url($flag); ?>" alt="" width="20" height="15" />
+                                <?php endif; ?>
                                 <?php echo esc_html(Functions::currency_label($rate['currency'])); ?>
                             </td>
                             <td>

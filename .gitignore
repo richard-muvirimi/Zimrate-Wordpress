@@ -8,6 +8,7 @@ zimrate-wordpress.code-workspace
 /build/
 /dist/
 /src/Views/js/dist/
+/src/Views/img/flags/
 *.phar
 
 # IDE

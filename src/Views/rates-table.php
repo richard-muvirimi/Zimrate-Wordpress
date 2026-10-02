@@ -15,7 +15,7 @@
  *
  * @var string $base
  * @var int $precision
- * @var array $rows currency => [label, rate]
+ * @var array $rows currency => [label, flag, rate]
  * @var string $info
  */
 
@@ -47,7 +47,12 @@ defined('ABSPATH') || exit();
             <tbody>
                 <?php foreach ($rows as $code => $row) : ?>
                     <tr data-zimrate-row="<?php echo esc_attr($code); ?>">
-                        <td><?php echo esc_html($row['label']); ?></td>
+                        <td>
+                            <?php if ($row['flag']) : ?>
+                                <img class="zimrate-flag" src="<?php echo esc_url($row['flag']); ?>" alt="" width="20" height="15" />
+                            <?php endif; ?>
+                            <?php echo esc_html($row['label']); ?>
+                        </td>
                         <td data-zimrate-cell><?php echo esc_html(
                             number_format_i18n(floatval($row['rate']), $precision)
                         ); ?></td>

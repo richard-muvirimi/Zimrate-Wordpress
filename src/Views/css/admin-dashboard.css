@@ -57,3 +57,9 @@ ul.zimrate-shortcode-list {
   padding: 0 20px;
   list-style: circle;
 }
+
+.zimrate-flag {
+  margin-right: .4em;
+  border-radius: 2px;
+  vertical-align: middle;
+}
