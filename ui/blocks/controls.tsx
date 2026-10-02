@@ -1,9 +1,15 @@
 /**
  * Sidebar controls shared by the blocks
  */
+import type { CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
-import { CheckboxControl, RangeControl, SelectControl, ToggleControl } from '@wordpress/components';
+import {
+    CheckboxControl,
+    CustomSelectControl,
+    RangeControl,
+    ToggleControl,
+} from '@wordpress/components';
 
 /**
  * Register a block from its block.json, php already declared it server side so
@@ -17,12 +23,25 @@ export const register = <T extends Record<string, any>>(
 const data: ZimrateBlocksData = window.zimrateBlocks ?? {
     currencies: {},
     bases: {},
+    flags: {},
     defaults: { base: 'USD', currency: '' },
 };
 
-/** Currency options as SelectControl wants them, in the order php gave them */
+/**
+ * A currency's flag as --zimrate-flag, for blocks-editor.css to draw ahead of
+ * its name. Nothing where the currency has no flag.
+ */
+const flag = (code: string) =>
+    (data.flags[code] ? { '--zimrate-flag': `url("${data.flags[code]}")` } : {}) as CSSProperties;
+
+/** Currency options as CustomSelectControl wants them, in the order php gave them */
 const options = (list: Record<string, string>) =>
-    Object.entries(list).map(([value, label]) => ({ value, label }));
+    Object.entries(list).map(([key, name]) => ({
+        key,
+        name,
+        className: 'zimrate-flagged',
+        style: flag(key),
+    }));
 
 interface CurrencySelectProps {
     label: string;
@@ -39,18 +58,23 @@ interface CurrencySelectProps {
  * a site that later changes its default carries every block along with it.
  */
 export const CurrencySelect = ({ label, value, bases = false, onChange }: CurrencySelectProps) => {
-    const list = bases ? data.bases : data.currencies;
+    const list = options(bases ? data.bases : data.currencies);
     const fallback = bases ? data.defaults.base : data.defaults.currency;
+    const current = value || fallback;
 
+    // the closed select shows its flag from the wrapper, see blocks-editor.css
     return (
-        <SelectControl
-            __nextHasNoMarginBottom
-            __next40pxDefaultSize
-            label={label}
-            value={value || fallback}
-            options={options(list)}
-            onChange={(next) => onChange(next === fallback ? '' : next)}
-        />
+        <div className="zimrate-flagged-select" style={flag(current)}>
+            <CustomSelectControl
+                __next40pxDefaultSize
+                label={label}
+                value={list.find((option) => option.key === current)}
+                options={list}
+                onChange={({ selectedItem }) =>
+                    onChange(selectedItem.key === fallback ? '' : selectedItem.key)
+                }
+            />
+        </div>
     );
 };
 
@@ -69,15 +93,16 @@ export const allCurrencies = () => Object.keys(data.currencies);
 export const CurrencyPicker = ({ value, onChange }: CurrencyPickerProps) => (
     <>
         {Object.entries(data.currencies).map(([code, label]) => (
-            <CheckboxControl
-                __nextHasNoMarginBottom
-                key={code}
-                label={label}
-                checked={value.includes(code)}
-                onChange={(checked) =>
-                    onChange(checked ? [...value, code] : value.filter((item) => item !== code))
-                }
-            />
+            <div key={code} className="zimrate-flagged-check" style={flag(code)}>
+                <CheckboxControl
+                    __nextHasNoMarginBottom
+                    label={label}
+                    checked={value.includes(code)}
+                    onChange={(checked) =>
+                        onChange(checked ? [...value, code] : value.filter((item) => item !== code))
+                    }
+                />
+            </div>
         ))}
     </>
 );
